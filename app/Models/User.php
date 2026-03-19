@@ -20,6 +20,7 @@ class User extends Authenticatable
     protected $fillable = [
         'nom',
         'email',
+        'role',
         'password',
         'slogan',
         'description',
@@ -50,4 +51,24 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    public function projets()
+    {
+        return $this->hasMany(Projet::class);
+    }
+
+    public function isSuperAdmin(): bool
+    {
+        return $this->role === 'superadmin';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->isSuperAdmin();
+    }
+
+    public function isBasicUser(): bool
+    {
+        return $this->role === 'user';
+    }
 }

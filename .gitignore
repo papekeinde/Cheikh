@@ -19,3 +19,10 @@ yarn-error.log
 /.vscode
 
 storage/debugbar/
+/build/
+/deploy/
+/scripts/
+remote-laravel-log.txt
+app-source-count.txt
+ftp-*.txt
+http-check.txt

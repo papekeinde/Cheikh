@@ -13,10 +13,18 @@ PORT_TO_USE="${PORT:-10000}"
 sed -i "s/Listen 80/Listen ${PORT_TO_USE}/" /etc/apache2/ports.conf
 sed -i "s/:80/:${PORT_TO_USE}/" /etc/apache2/sites-available/*.conf
 
-# Ensure writable paths and sqlite file
-mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache database
-touch database/database.sqlite
-chown -R www-data:www-data storage bootstrap/cache database
+# Ensure writable paths
+mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache
+
+# Create sqlite database file only when sqlite is selected
+DB_DRIVER="$(grep -E '^DB_CONNECTION=' .env | cut -d '=' -f2 | tr -d '[:space:]')"
+if [ "${DB_DRIVER}" = "sqlite" ]; then
+  mkdir -p database
+  touch database/database.sqlite
+  chown -R www-data:www-data database
+fi
+
+chown -R www-data:www-data storage bootstrap/cache
 
 # Generate key only if missing
 if grep -q '^APP_KEY=$' .env || ! grep -q '^APP_KEY=base64:' .env; then

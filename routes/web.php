@@ -29,6 +29,26 @@ Route::get('/__health', function () {
     ]);
 });
 
+Route::get('/__debug-render', function () {
+    try {
+        view('auth.login')->render();
+        view('contact')->render();
+
+        return response()->json([
+            'status' => 'ok',
+            'message' => 'login and contact views render correctly',
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'exception' => get_class($e),
+            'message' => $e->getMessage(),
+            'file' => $e->getFile(),
+            'line' => $e->getLine(),
+        ], 500);
+    }
+});
+
 Route::get('/contact', function () {
     return view('contact');
 })->name('contact');

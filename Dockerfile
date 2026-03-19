@@ -2,8 +2,8 @@ FROM php:8.2-apache
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y \
-    git curl zip unzip libpng-dev libonig-dev libxml2-dev libsqlite3-dev \
-    && docker-php-ext-install pdo pdo_sqlite pdo_mysql mbstring exif pcntl bcmath gd \
+    git curl zip unzip libpng-dev libonig-dev libxml2-dev libsqlite3-dev libpq-dev \
+    && docker-php-ext-install pdo pdo_sqlite pdo_mysql pdo_pgsql mbstring exif pcntl bcmath gd \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Install Composer
@@ -32,9 +32,8 @@ RUN cp .env.render .env
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts \
     && php artisan storage:link || true
 
-# Prepare writable directories and sqlite db file
-RUN touch database/database.sqlite \
-    && mkdir -p storage/framework/{cache,sessions,views} \
+# Prepare writable directories
+RUN mkdir -p storage/framework/{cache,sessions,views} database \
     && chown -R www-data:www-data storage bootstrap/cache database
 
 # Runtime bootstrap script for Render

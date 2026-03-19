@@ -11,14 +11,26 @@ class Projet extends Model
 
     protected $fillable = [
         'user_id', 'titre', 'description', 'image', 'lien', 'github', 'tags', 'ordre', 'complexite', 'type',
+        'status', 'progress', 'admin_feedback', 'approved_at',
     ];
 
     protected $casts = [
         'tags' => 'array',
+        'approved_at' => 'datetime',
     ];
 
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function scopeApproved($query)
+    {
+        return $query->where('status', 'approved');
+    }
+
+    public function scopePending($query)
+    {
+        return $query->where('status', 'pending');
     }
 }

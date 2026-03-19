@@ -1,66 +1,70 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# FolioLara
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Portfolio Laravel avec vitrine animée, dashboard TailAdmin, rôles superadmin/user, workflow de soumission de projets et formulaire de contact par email.
 
-## About Laravel
+## Fonctionnalités
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- Vitrine portfolio avec animations GSAP
+- Dashboard TailAdmin adapté au design public
+- Deux rôles: superadmin et user
+- Soumission de projets par les utilisateurs connectés
+- Validation, rejet et suivi de progression par le superadmin
+- Formulaire de contact avec envoi d'email
+- Filtrage des projets approuvés sur la vitrine
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Stack
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- Laravel 10
+- PHP 8.1+
+- Blade
+- Tailwind CSS
+- Vite
+- SQLite en configuration Render actuelle
+- MySQL possible pour hébergement mutualisé
 
-## Learning Laravel
+## Installation locale
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+```bash
+composer install
+npm install
+copy .env.example .env
+php artisan key:generate
+php artisan migrate --seed
+npm run build
+php artisan serve
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+## Comptes et rôles
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- Le premier utilisateur peut être défini comme superadmin
+- Les nouveaux inscrits sont créés avec le rôle user
+- Le superadmin valide les projets et met à jour leur progression dans le dashboard
 
-## Laravel Sponsors
+## Déploiement
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+Le guide complet est dans [DEPLOYMENT.md](DEPLOYMENT.md).
 
-### Premium Partners
+Résumé rapide:
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+- Meilleur gratuit simple pour projets statiques: GitHub Pages
+- Meilleur gratuit permanent pour Laravel étudiant/portfolio avec MySQL: InfinityFree
+- Plus simple pour déployer vite avec Docker: Render
+- 000WebHost n'est plus une vraie option gratuite autonome
+- GoogieHost reste un plan B, mais moins fiable que InfinityFree
 
-## Contributing
+## État actuel des liens publics audités
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+- OK: PapiGPT
+- OK: Quiz App
+- OK: TestImo
+- OK: Star Group
+- OK: To-Do List
+- KO/à redéployer: MonTerrain, GStockBoncoin, SignalementUrbain, SunuTontine, GestionSalaire, portfolio principal cheikhkeinde.onrender.com
 
-## Code of Conduct
+## Points importants avant production
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+- Configurer les variables MAIL_* dans l'environnement cible
+- Vérifier APP_URL
+- Lancer les migrations sur la base cible
+- Pour Render en SQLite, les données sont fragiles lors des redéploiements
+- Pour un vrai usage formulaire + dashboard + projets, préférer une base MySQL persistante
