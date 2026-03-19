@@ -31,7 +31,7 @@ COPY . .
 RUN cp .env.render .env
 
 # Install dependencies and build frontend assets
-RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist \
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts \
     && npm ci \
     && npm run build \
     && npm prune --omit=dev
