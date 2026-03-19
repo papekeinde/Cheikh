@@ -54,6 +54,9 @@ RUN php artisan key:generate --force \
     && php artisan migrate --force \
     && php artisan db:seed --force
 
-EXPOSE 80
+EXPOSE 10000
 
-CMD ["apache2-foreground"]
+# Render uses dynamic $PORT — configure Apache to listen on it at runtime
+CMD sed -i "s/Listen 80/Listen ${PORT:-10000}/" /etc/apache2/ports.conf \
+    && sed -i "s/:80/:${PORT:-10000}/" /etc/apache2/sites-available/*.conf \
+    && apache2-foreground
