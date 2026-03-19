@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\DashboardProjectController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -17,11 +20,26 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/', [UserController::class, 'index'])->name('vitrine');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/__health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'service' => 'foliolara',
+        'branch' => 'gpt',
+        'timestamp' => now()->toDateTimeString(),
+    ]);
+});
+
+Route::get('/contact', function () {
+    return view('contact');
+})->name('contact');
+Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/projects/create', [DashboardProjectController::class, 'create'])->name('dashboard.projects.create');
+    Route::post('/dashboard/projects', [DashboardProjectController::class, 'store'])->name('dashboard.projects.store');
+    Route::patch('/dashboard/projects/{projet}/review', [DashboardProjectController::class, 'review'])->name('dashboard.projects.review');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
