@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Schema;
 
 class UserController extends Controller
 {
@@ -12,7 +13,9 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::where('role', 'superadmin')->first() ?? User::first();
+        $user = Schema::hasColumn('users', 'role')
+            ? (User::where('role', 'superadmin')->first() ?? User::first())
+            : User::first();
 
         if (!$user) {
             $user = new User([
