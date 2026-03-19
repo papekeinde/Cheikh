@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ $user->nom ?? 'Cheikh Keinde' }}</title>
+    <title>{{ optional($user)->nom ?? 'Cheikh Keinde' }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -18,6 +18,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         :root {
+            --accent: #f16529;
             --bg-color: #f3f4f6;
             --text-color: #000;
             --text-secondary: #333;
@@ -84,15 +85,32 @@
             gap: 40px;
         }
         .nav-links a {
+            position: relative;
             font-family: 'Playfair Display', serif;
             font-size: 16px;
             font-weight: 400;
             color: var(--text-color);
             text-decoration: none;
             letter-spacing: 0.01em;
-            transition: opacity 0.3s;
+            transition: color 0.3s, opacity 0.3s;
         }
-        .nav-links a:hover { opacity: 0.6; }
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -8px;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.25s ease;
+        }
+        .nav-links a:hover {
+            opacity: 1;
+            color: var(--accent);
+        }
+        .nav-links a:hover::after { transform: scaleX(1); }
 
         .nav-right {
             display: flex;
@@ -114,9 +132,9 @@
             transition: all 0.3s;
         }
         .btn-connect:hover {
-            background: var(--btn-primary-bg);
-            color: var(--btn-primary-text);
-            border-color: var(--btn-primary-bg);
+            background: var(--accent);
+            color: #111827;
+            border-color: var(--accent);
         }
 
         /* Dark mode toggle */
@@ -132,7 +150,10 @@
             justify-content: center;
             transition: all 0.3s;
         }
-        .theme-toggle:hover { border-color: var(--text-color); }
+        .theme-toggle:hover {
+            border-color: var(--accent);
+            background: rgba(241, 101, 41, 0.08);
+        }
         .theme-toggle svg {
             width: 18px;
             height: 18px;
@@ -320,7 +341,7 @@
             z-index: 260;
             width: 42vw;
             max-width: 680px;
-            opacity: 0;
+            opacity: 1;
             pointer-events: none;
         }
         .about-content p {
@@ -330,6 +351,106 @@
             line-height: 1.75;
             color: #fff;
             letter-spacing: 0.015em;
+        }
+        .about-word {
+            display: inline-block;
+            opacity: 0;
+            transform: translateY(18px);
+            will-change: opacity, transform;
+        }
+
+        /* Cursus text - same style as about text */
+        .cursus-text {
+            position: fixed;
+            right: 48px;
+            z-index: 265;
+            pointer-events: none;
+            white-space: nowrap;
+            opacity: 0;
+            overflow: visible;
+        }
+        .cursus-text .cursus-char {
+            display: inline-block;
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(4rem, 10vw, 11rem);
+            font-weight: 400;
+            line-height: 0.88;
+            letter-spacing: 0.02em;
+            text-transform: uppercase;
+            color: #fff;
+        }
+
+        /* Cursus section content */
+        .cursus-content {
+            position: fixed;
+            top: 50%;
+            left: 48px;
+            transform: translateY(-50%);
+            z-index: 260;
+            width: 46vw;
+            max-width: 750px;
+            opacity: 0;
+            pointer-events: none;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .cursus-content::-webkit-scrollbar { width: 4px; }
+        .cursus-content::-webkit-scrollbar-track { background: transparent; }
+        .cursus-content::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.3); border-radius: 2px; }
+        .cursus-content h3 {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.5);
+            margin-bottom: 20px;
+        }
+        .timeline-item {
+            position: relative;
+            padding-left: 24px;
+            margin-bottom: 28px;
+            border-left: 2px solid rgba(255,255,255,0.15);
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 6px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #fff;
+        }
+        .timeline-year {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            color: rgba(255,255,255,0.6);
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+        .timeline-title {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            color: #fff;
+            margin-bottom: 2px;
+        }
+        .timeline-subtitle {
+            font-family: 'Playfair Display', serif;
+            font-size: 14px;
+            font-style: italic;
+            color: rgba(255,255,255,0.7);
+            margin-bottom: 6px;
+        }
+        .timeline-desc {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 400;
+            color: rgba(255,255,255,0.55);
+            line-height: 1.6;
         }
 
         /* White wipe overlay (like dark overlay but from left) */
@@ -801,13 +922,15 @@
             position: fixed;
             width: 30px;
             height: 30px;
-            background: #000;
+            background: #fff;
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
+            mix-blend-mode: difference;
         }
         .cursor-blob.on-projets {
-            background: #000;
+            background: #fff;
+            mix-blend-mode: difference;
         }
 
         /* Dark mode horizontal wipe overlay */
@@ -861,6 +984,205 @@
         .navbar.is-blending-white .theme-toggle svg {
             fill: #fff !important;
         }
+
+        /* Contact section */
+        .contact-section {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 310;
+            pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            background: var(--bg-color);
+            transform: translateY(100%);
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
+        .contact-section.active {
+            pointer-events: auto;
+        }
+        .contact-inner {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            padding: 80px 48px 60px;
+            gap: 80px;
+            align-items: flex-start;
+            min-height: 100vh;
+        }
+        .contact-left {
+            flex: 1;
+        }
+        .contact-left h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 400;
+            color: var(--text-color);
+            text-transform: uppercase;
+            letter-spacing: 0.02em;
+            line-height: 1.1;
+            margin-bottom: 24px;
+        }
+        .contact-left p {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            max-width: 480px;
+        }
+        .contact-left .contact-links {
+            margin-top: 28px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            max-width: 480px;
+        }
+        .contact-right {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 28px;
+        }
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            padding: 20px 28px;
+            border: 1px solid var(--btn-border);
+            border-radius: 16px;
+            background: var(--btn-bg);
+            transition: box-shadow 0.3s, border-color 0.3s, transform 0.3s;
+            text-decoration: none;
+            color: var(--text-color);
+            pointer-events: auto;
+        }
+        .contact-item:hover {
+            box-shadow: 0 8px 30px rgba(0,0,0,0.08);
+            border-color: #999;
+            transform: translateY(-2px);
+        }
+        .contact-item svg {
+            width: 28px;
+            height: 28px;
+            flex-shrink: 0;
+            fill: var(--text-color);
+        }
+        .contact-item-text {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .contact-item-label {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            opacity: 0.6;
+        }
+        .contact-item-value {
+            font-family: 'Inter', sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+        .contact-form {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            padding: 28px;
+            border: 1px solid var(--btn-border);
+            border-radius: 20px;
+            background: var(--btn-bg);
+            pointer-events: auto;
+        }
+        .contact-form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+        .contact-form input,
+        .contact-form textarea {
+            width: 100%;
+            border: 1px solid var(--btn-border);
+            border-radius: 14px;
+            background: transparent;
+            color: var(--text-color);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            padding: 14px 16px;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .contact-form input:focus,
+        .contact-form textarea:focus {
+            border-color: #F16529;
+            box-shadow: 0 0 0 3px rgba(241, 101, 41, 0.12);
+        }
+        .contact-form textarea {
+            min-height: 140px;
+            resize: vertical;
+        }
+        .contact-form button {
+            align-self: flex-start;
+            border: none;
+            border-radius: 999px;
+            background: #F16529;
+            color: #000;
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            padding: 14px 22px;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+        .contact-form button:hover {
+            background: #d65420;
+            transform: translateY(-1px);
+        }
+        .contact-form-status {
+            padding: 14px 16px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .contact-form-status.success {
+            background: rgba(34, 197, 94, 0.12);
+            color: #22c55e;
+        }
+        .contact-form-status.error {
+            background: rgba(239, 68, 68, 0.12);
+            color: #ef4444;
+        }
+
+        @media (max-width: 768px) {
+            .contact-inner {
+                flex-direction: column;
+                gap: 40px;
+                padding: 0 24px;
+                text-align: center;
+            }
+            .contact-left p {
+                max-width: 100%;
+            }
+            .contact-item {
+                padding: 16px 20px;
+            }
+            .contact-form-grid {
+                grid-template-columns: 1fr;
+            }
+            .contact-form {
+                padding: 20px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -869,7 +1191,7 @@
     <div class="cursor-blob" id="cursorBlob"></div>
 
     @php
-        $nomComplet = $user->nom ?? 'CHEIKH KEINDE';
+        $nomComplet = optional($user)->nom ?? 'CHEIKH KEINDE';
         $parts = explode(' ', $nomComplet);
     @endphp
 
@@ -886,6 +1208,7 @@
         <div class="nav-links">
             <a href="#accueil">Accueil</a>
             <a href="#apropos">A propos</a>
+            <a href="#cursus">Cursus</a>
             <a href="#projets">Projets</a>
             <a href="#contact">Contact</a>
         </div>
@@ -906,15 +1229,19 @@
     {{-- HERO --}}
     <section class="hero" id="accueil">
 
-        @if($user && $user->photo && $user->photo !== 'default-avatar.jpg')
-            <img src="{{ asset('storage/' . $user->photo) }}" alt="{{ $user->nom }}" class="hero-photo">
+        @if(optional($user)->photo && optional($user)->photo !== 'default-avatar.jpg')
+            <img src="{{ asset('storage/' . optional($user)->photo) }}" alt="{{ optional($user)->nom ?? 'Photo profil' }}" class="hero-photo">
         @endif
 
         <div class="hero-bottom">
 
             <div class="hero-cta" id="hero-buttons">
                 <a href="#projets" class="btn-outline">mes projets</a>
-                <a href="#contact" class="btn-primary">job with me</a>
+                @auth
+                    <a href="{{ route('dashboard.projects.create') }}" class="btn-primary">job with me</a>
+                @else
+                    <a href="{{ route('register') }}" class="btn-primary">job with me</a>
+                @endauth
             </div>
 
             <div class="hero-text" id="hero-text">
@@ -931,17 +1258,22 @@
     <section class="scroll-section" id="scrollSection3"></section>
     <section class="scroll-section" id="apropos"></section>
     <section class="scroll-section" id="scrollSection5"></section>
+    <section class="scroll-section" id="scrollSectionAboutExit"></section>
+    <section class="scroll-section" id="cursus"></section>
+    <section class="scroll-section" id="scrollSectionCursusContent"></section>
+    <section class="scroll-section" id="scrollSectionCursusExit"></section>
     <section class="scroll-section" id="scrollSection6"></section>
     <section class="scroll-section" id="scrollSection7"></section>
     <section class="scroll-section" id="scrollSection8"></section>
     <section class="scroll-section" id="scrollSection9" style="height:300vh"></section>
+    <section class="scroll-section" id="scrollSectionContact"></section>
 
     <!-- White wipe overlay -->
     <div class="white-overlay" id="whiteOverlay"></div>
 
     <!-- Stacks section -->
     <div class="stacks-section" id="stacksSection">
-        <h2 class="stacks-title">Stacks</h2>
+        <h2 class="stacks-title">Stack</h2>
         <div class="marquee-wrapper" id="marqueeRow1">
             <div class="marquee-track">
                 <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" alt="Vue.js"><span>Vue.js</span></div>
@@ -959,23 +1291,30 @@
         </div>
         <div class="marquee-wrapper" id="marqueeRow2">
             <div class="marquee-track-reverse">
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java"><span>Java</span></div>
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5"><span>HTML5</span></div>
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3"><span>CSS3</span></div>
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js"><span>Node.js</span></div>
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind"><span>Tailwind</span></div>
+                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" alt="Windows Server"><span>Windows Server</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="9.5" cy="7" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M20 8v6M17 11h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span>AD DS</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>DNS</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="6" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="3" y="13" width="18" height="6" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M7 8h.01M7 16h.01M11 8h6M11 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>DHCP</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.36 6.36L3 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M3 12A9 9 0 0 1 18.36 5.64L21 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M21 3v5h-5M3 21v-5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span>WSUS</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="4" y="17" width="16" height="4" rx="1.5" stroke="currentColor" stroke-width="1.8" fill="none"/></svg><span>WDS</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 6 5.5v5.5c0 4 2.6 7.4 6 8.5 3.4-1.1 6-4.5 6-8.5V5.5L12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="none"/><path d="m9.5 11.5 1.7 1.7 3.3-3.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span>CA</span></div>
+                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" alt="Linux"><span>Linux</span></div>
                 <!-- Duplicate for seamless loop -->
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/java/java-original.svg" alt="Java"><span>Java</span></div>
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5"><span>HTML5</span></div>
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3"><span>CSS3</span></div>
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original.svg" alt="Node.js"><span>Node.js</span></div>
-                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-original.svg" alt="Tailwind"><span>Tailwind</span></div>
+                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/windows8/windows8-original.svg" alt="Windows Server"><span>Windows Server</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><circle cx="9.5" cy="7" r="3" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M20 8v6M17 11h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span>AD DS</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>DNS</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="6" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><rect x="3" y="13" width="18" height="6" rx="2" stroke="currentColor" stroke-width="1.8" fill="none"/><path d="M7 8h.01M7 16h.01M11 8h6M11 16h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/></svg><span>DHCP</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a9 9 0 0 1-15.36 6.36L3 16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M3 12A9 9 0 0 1 18.36 5.64L21 8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M21 3v5h-5M3 21v-5h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span>WSUS</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" fill="none"/><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><rect x="4" y="17" width="16" height="4" rx="1.5" stroke="currentColor" stroke-width="1.8" fill="none"/></svg><span>WDS</span></div>
+                <div class="stack-item"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3 6 5.5v5.5c0 4 2.6 7.4 6 8.5 3.4-1.1 6-4.5 6-8.5V5.5L12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" fill="none"/><path d="m9.5 11.5 1.7 1.7 3.3-3.7" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg><span>CA</span></div>
+                <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/linux/linux-original.svg" alt="Linux"><span>Linux</span></div>
             </div>
         </div>
     </div>
 
     <!-- Projets section -->
-    <div class="projets-section" id="projetsSection">
+    <div class="projets-section" id="projetsSection" data-anchor="projets" aria-label="Section projets">
+        <span id="projets" class="sr-only" aria-hidden="true"></span>
         <div class="projets-header">
             <h2 class="projets-title" id="projetsTitle">Mes Projets</h2>
             <div class="projets-filters" id="projetsFilters">
@@ -1029,6 +1368,67 @@
         </div>
     </div>
 
+    <!-- Contact section -->
+    <div class="contact-section" id="contactSection">
+        <div class="contact-inner">
+            <div class="contact-left">
+                <h2>Contact</h2>
+                <p>Vous avez un projet en tête ou une opportunité à proposer ? N'hésitez pas à me contacter. Je suis toujours ouvert aux nouvelles collaborations.</p>
+                <div class="contact-links">
+                    <a href="https://www.linkedin.com/in/pape-cheikh-keinde-b6612a2a0/" target="_blank" rel="noopener noreferrer" class="contact-item">
+                        <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                        <div class="contact-item-text">
+                            <span class="contact-item-label">LinkedIn</span>
+                            <span class="contact-item-value">Pape Cheikh Keinde</span>
+                        </div>
+                    </a>
+                    <a href="https://github.com/Pkeinde6" target="_blank" rel="noopener noreferrer" class="contact-item">
+                        <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                        <div class="contact-item-text">
+                            <span class="contact-item-label">GitHub</span>
+                            <span class="contact-item-value">Pkeinde6</span>
+                        </div>
+                    </a>
+                </div>
+            </div>
+            <div class="contact-right">
+                @if (session('contact_success'))
+                    <div class="contact-form-status success">{{ session('contact_success') }}</div>
+                @endif
+
+                @if ($errors->has('name') || $errors->has('email') || $errors->has('subject') || $errors->has('message'))
+                    <div class="contact-form-status error">{{ $errors->first() }}</div>
+                @endif
+
+                <a href="mailto:pkeinde6@gmail.com" class="contact-item">
+                    <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    <div class="contact-item-text">
+                        <span class="contact-item-label">Email</span>
+                        <span class="contact-item-value">pkeinde6@gmail.com</span>
+                    </div>
+                </a>
+                <div class="contact-item">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
+                    <div class="contact-item-text">
+                        <span class="contact-item-label">Localisation</span>
+                        <span class="contact-item-value">Dakar, Sénégal</span>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('contact.store') }}" class="contact-form" id="contact">
+                    @csrf
+                    <div class="contact-form-grid">
+                        <input type="text" name="name" placeholder="Votre nom" value="{{ old('name') }}" required>
+                        <input type="email" name="email" placeholder="Votre email" value="{{ old('email') }}" required>
+                    </div>
+                    <input type="text" name="subject" placeholder="Sujet" value="{{ old('subject') }}" required>
+                    <textarea name="message" placeholder="Parlez-moi de votre projet..." required>{{ old('message') }}</textarea>
+                    <button type="submit">Envoyer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script>
         window.__projets = @json($projets);
     </script>
@@ -1039,6 +1439,34 @@
     <!-- About content (right side) -->
     <div class="about-content" id="aboutContent">
         <p>Développeur fullstack junior basé à Dakar, Sénégal. Je travaille avec Vue.js, Laravel, Python, C#/.NET, Java et JavaScript pour concevoir des applications web modernes. Des quiz interactifs aux systèmes de gestion scolaire en passant par des plateformes portfolio, j'aime transformer les idées en code propre et fonctionnel.</p>
+    </div>
+
+    <!-- Cursus text (fixed, animated via JS like about) -->
+    <div class="cursus-text" id="cursusText">CURSUS</div>
+
+    <!-- Cursus content (right side) -->
+    <div class="cursus-content" id="cursusContent">
+        <h3>Formation</h3>
+        <div class="timeline-item">
+            <div class="timeline-year">2023 – 2026</div>
+            <div class="timeline-title">Licence en Informatique</div>
+            <div class="timeline-subtitle">Groupe IAM</div>
+            <div class="timeline-desc">Microsoft SQL Server, PHP et développement fullstack : Laravel, Vue.js, Java, C#/.NET, bases de données, gestion de projet agile.</div>
+        </div>
+        <div class="timeline-item">
+            <div class="timeline-year">2020 – 2023</div>
+            <div class="timeline-title">Baccalauréat scientifique</div>
+            <div class="timeline-subtitle">Cours Sainte Marie de Hann</div>
+            <div class="timeline-desc">Sciences biologiques, sciences physiques et sciences mathématiques.</div>
+        </div>
+
+        <h3 style="margin-top: 32px;">Expérience Professionnelle</h3>
+        <div class="timeline-item">
+            <div class="timeline-year">Déc. 2024 – Présent</div>
+            <div class="timeline-title">Développeur Web</div>
+            <div class="timeline-subtitle">STAR Group · Temps partiel</div>
+            <div class="timeline-desc">Gestion des profils sur les réseaux sociaux et communication avec les clients. HTML5, XAMPP et développement web. Administration Windows Server (AD DS, DNS, DHCP, WSUS, WDS, CA) et Linux. Basé à Parcelles Assainies, Dakar, Sénégal.</div>
+        </div>
     </div>
 
     <!-- GSAP CDN + ScrollTrigger -->
@@ -1082,7 +1510,6 @@
         let blobX = 0, blobY = 0;
         let prevBlobX = 0, prevBlobY = 0;
         let smoothVx = 0, smoothVy = 0;
-
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
@@ -1544,8 +1971,24 @@
                 }
             });
 
-            // === Phase 5: About content appears with smooth block reveal ===
+            // === Phase 5: About content — WORD TEXT SPLIT reveal ===
             const aboutContent = document.getElementById('aboutContent');
+
+            // Split the <p> text into individual word spans
+            const aboutPara = aboutContent.querySelector('p');
+            const aboutWords = aboutPara.textContent.trim().split(/\s+/);
+            aboutPara.textContent = '';
+            aboutWords.forEach((word, i) => {
+                const span = document.createElement('span');
+                span.className = 'about-word';
+                span.textContent = word;
+                aboutPara.appendChild(span);
+                // Add a space after each word except the last
+                if (i < aboutWords.length - 1) {
+                    aboutPara.appendChild(document.createTextNode(' '));
+                }
+            });
+            const aboutWordEls = aboutPara.querySelectorAll('.about-word');
 
             ScrollTrigger.create({
                 trigger: '#scrollSection5',
@@ -1556,19 +1999,181 @@
                     const progress = self.progress;
 
                     if (progress < 0.01) {
-                        aboutContent.style.opacity = '0';
+                        aboutWordEls.forEach(w => {
+                            w.style.opacity = '0';
+                            w.style.transform = 'translateY(18px)';
+                        });
                         aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
                         return;
                     }
 
-                    // Layout morph: block slides up + fades in
+                    // Container slides up
                     const slideUp = (1 - progress) * 40;
-                    aboutContent.style.opacity = String(Math.min(1, progress * 2.5));
                     aboutContent.style.transform = `translateY(calc(-50% + ${slideUp}px))`;
+
+                    // Word-by-word reveal staggered across scroll progress
+                    const total = aboutWordEls.length;
+                    aboutWordEls.forEach((word, i) => {
+                        const wordStart = (i / total) * 0.7;
+                        const wordEnd = wordStart + 0.4;
+                        const wordProgress = Math.max(0, Math.min(1, (progress - wordStart) / (wordEnd - wordStart)));
+                        word.style.opacity = String(wordProgress);
+                        word.style.transform = `translateY(${(1 - wordProgress) * 18}px)`;
+                    });
                 },
                 onLeaveBack: () => {
-                    aboutContent.style.opacity = '0';
+                    aboutWordEls.forEach(w => {
+                        w.style.opacity = '0';
+                        w.style.transform = 'translateY(18px)';
+                    });
                     aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
+                }
+            });
+
+            // === Phase 5b: About text + content slide out to the LEFT ===
+            ScrollTrigger.create({
+                trigger: '#scrollSectionAboutExit',
+                start: 'top bottom',
+                end: 'top center',
+                scrub: 0.5,
+                onUpdate: (self) => {
+                    const progress = self.progress;
+                    const fadeOut = 1 - progress;
+                    const slideLeft = -progress * (window.innerWidth + 200);
+
+                    // About text slides to the left
+                    aboutText.style.opacity = String(Math.max(0, fadeOut));
+                    gsap.set(aboutText, {
+                        x: slideLeft
+                    });
+
+                    // About content also slides to the left (slide container + fade words)
+                    gsap.set(aboutContent, { x: slideLeft * 0.8 });
+                    aboutWordEls.forEach(w => {
+                        w.style.opacity = String(Math.max(0, fadeOut));
+                    });
+                },
+                onLeaveBack: () => {
+                    // restored by Phase 4/5
+                    gsap.set(aboutText, { x: 0 });
+                    gsap.set(aboutContent, { x: 0 });
+                }
+            });
+
+            // === Phase 5c: "CURSUS" text split from RIGHT (mirror of A PROPOS) ===
+            const cursusText = document.getElementById('cursusText');
+            const cursusString = cursusText.textContent;
+            cursusText.textContent = '';
+            cursusString.split('').forEach(char => {
+                const span = document.createElement('span');
+                span.className = 'cursus-char';
+                span.textContent = char === ' ' ? '\u00A0' : char;
+                cursusText.appendChild(span);
+            });
+            const cursusChars = cursusText.querySelectorAll('.cursus-char');
+
+            // Start x-offset (off-screen to the right relative to natural right:48px position)
+            const CURSUS_START_X = window.innerWidth + 300;
+
+            ScrollTrigger.create({
+                trigger: '#cursus',
+                start: 'top bottom',
+                end: 'top top',
+                scrub: 0.5,
+                onUpdate: (self) => {
+                    const progress = self.progress;
+
+                    if (progress > 0.01) {
+                        cursusText.style.opacity = '1';
+
+                        // Mirror of A PROPOS: starts top-right offset, slides to center-right
+                        // CSS already sets right:48px, so we only animate top + x offset
+                        const currentX = CURSUS_START_X * (1 - progress); // from +offset to 0
+                        const startY = 90;
+                        const endY = window.innerHeight / 2;
+                        const currentY = startY + (endY - startY) * progress;
+                        const currentScale = 0.85 + 0.15 * progress;
+
+                        gsap.set(cursusText, {
+                            x: currentX,
+                            top: currentY,
+                            yPercent: -50,
+                            scale: currentScale,
+                            transformOrigin: 'right center'
+                        });
+
+                        // Progressive character reveal — each char slides in from right
+                        const totalChars = cursusChars.length;
+                        cursusChars.forEach((char, i) => {
+                            const charStart = i / totalChars;
+                            const charEnd = (i + 1) / totalChars;
+                            const charProgress = Math.max(0, Math.min(1, (progress - charStart) / (charEnd - charStart)));
+                            char.style.opacity = charProgress;
+                            char.style.transform = `translateX(${(1 - charProgress) * 40}px)`;
+                        });
+                    } else {
+                        cursusText.style.opacity = '0';
+                        gsap.set(cursusText, { x: CURSUS_START_X, scale: 0.85 });
+                        cursusChars.forEach(char => {
+                            char.style.opacity = '0';
+                            char.style.transform = 'translateX(40px)';
+                        });
+                    }
+                },
+                onLeaveBack: () => {
+                    cursusText.style.opacity = '0';
+                    gsap.set(cursusText, { x: CURSUS_START_X, scale: 0.85 });
+                    cursusChars.forEach(char => {
+                        char.style.opacity = '0';
+                        char.style.transform = 'translateX(40px)';
+                    });
+                }
+            });
+
+            // === Phase 5d: Cursus content appears (same as about content) ===
+            const cursusContent = document.getElementById('cursusContent');
+
+            ScrollTrigger.create({
+                trigger: '#scrollSectionCursusContent',
+                start: 'top bottom',
+                end: 'center center',
+                scrub: 0.5,
+                onUpdate: (self) => {
+                    const progress = self.progress;
+
+                    if (progress < 0.01) {
+                        cursusContent.style.opacity = '0';
+                        cursusContent.style.transform = `translateY(calc(-50% + 40px))`;
+                        return;
+                    }
+
+                    const slideUp = (1 - progress) * 40;
+                    cursusContent.style.opacity = String(Math.min(1, progress * 2.5));
+                    cursusContent.style.transform = `translateY(calc(-50% + ${slideUp}px))`;
+                },
+                onLeaveBack: () => {
+                    cursusContent.style.opacity = '0';
+                    cursusContent.style.transform = `translateY(calc(-50% + 40px))`;
+                }
+            });
+
+            // === Phase 5e: Keep cursus visible; stacks will mask it by sliding over ===
+            ScrollTrigger.create({
+                trigger: '#scrollSectionCursusExit',
+                start: 'top bottom',
+                end: 'top center',
+                scrub: 0.5,
+                onUpdate: () => {
+                    cursusText.style.opacity = '1';
+                    cursusContent.style.opacity = '1';
+                    gsap.set(cursusText, { x: 0 });
+                    gsap.set(cursusContent, { x: 0 });
+                },
+                onLeaveBack: () => {
+                    gsap.set(cursusText, { x: 0 });
+                    gsap.set(cursusContent, { x: 0 });
+                    cursusText.style.opacity = '1';
+                    cursusContent.style.opacity = '1';
                 }
             });
 
@@ -1907,6 +2512,61 @@
                     const idx = Math.min(Math.floor(progress * count), count - 1);
                     showProjet(idx);
                     progressFill.style.width = ((idx + 1) / count * 100) + '%';
+                }
+            });
+
+            // === Phase 10: Contact section slides up over projets ===
+            const contactSection = document.getElementById('contactSection');
+
+            ScrollTrigger.create({
+                trigger: '#scrollSectionContact',
+                start: 'top bottom',
+                end: 'top top',
+                scrub: 0.5,
+                onUpdate: (self) => {
+                    const progress = self.progress;
+
+                    if (progress < 0.01) {
+                        contactSection.style.transform = 'translateY(100%)';
+                        contactSection.classList.remove('active');
+                        return;
+                    }
+
+                    const slideUp = (1 - progress) * 100;
+                    contactSection.style.transform = `translateY(${slideUp}%)`;
+
+                    if (progress > 0.95) {
+                        contactSection.classList.add('active');
+                        navbar.classList.remove('is-blending');
+                        navbar.style.mixBlendMode = 'normal';
+                        navbar.style.background = 'var(--bg-color)';
+                        navbar.querySelectorAll('.logo-first, .logo-last, .nav-links a, .btn-connect').forEach(el => {
+                            el.style.color = 'var(--text-color)';
+                        });
+                        const btn = navbar.querySelector('.btn-connect');
+                        const toggle = navbar.querySelector('.theme-toggle');
+                        if (btn) { btn.style.borderColor = 'var(--btn-border)'; btn.style.background = 'var(--btn-bg)'; }
+                        if (toggle) { toggle.style.borderColor = 'var(--btn-border)'; toggle.style.background = 'var(--btn-bg)'; }
+                        navbar.querySelectorAll('.theme-toggle svg').forEach(s => s.style.fill = 'var(--text-color)');
+                        cursorBlob.classList.remove('on-projets');
+                    } else {
+                        contactSection.classList.remove('active');
+                    }
+                },
+                onLeaveBack: () => {
+                    contactSection.style.transform = 'translateY(100%)';
+                    contactSection.classList.remove('active');
+                    // Restore projets navbar state
+                    navbar.style.background = 'transparent';
+                    navbar.querySelectorAll('.logo-first, .logo-last, .nav-links a, .btn-connect').forEach(el => {
+                        el.style.color = '#fff';
+                    });
+                    const btn = navbar.querySelector('.btn-connect');
+                    const toggle = navbar.querySelector('.theme-toggle');
+                    if (btn) { btn.style.borderColor = 'rgba(255,255,255,0.4)'; btn.style.background = 'transparent'; }
+                    if (toggle) { toggle.style.borderColor = 'rgba(255,255,255,0.4)'; toggle.style.background = 'transparent'; }
+                    navbar.querySelectorAll('.theme-toggle svg').forEach(s => s.style.fill = '#fff');
+                    cursorBlob.classList.add('on-projets');
                 }
             });
 

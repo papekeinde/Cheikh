@@ -12,8 +12,19 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = User::first();
-        $projets = \App\Models\Projet::where('user_id', $user?->id)->orderBy('ordre')->get();
+        $user = User::where('role', 'superadmin')->first() ?? User::first();
+
+        if (!$user) {
+            $user = new User([
+                'nom' => 'Cheikh Keinde',
+                'photo' => null,
+            ]);
+        }
+
+        $projets = \App\Models\Projet::where('user_id', $user?->id)
+            ->approved()
+            ->orderBy('ordre')
+            ->get();
         return view('vitrine', compact('user', 'projets'));
     }
 
