@@ -24,10 +24,18 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
+            'nom' => 'Cheikh Keinde',
+            'slogan' => 'Développeur Full-Stack',
+            'description' => 'Développeur Full-Stack passionné, spécialisé en Laravel, Vue.js, C# .NET et solutions web modernes.',
+            'photo' => 'default-avatar.jpg',
+            'tel1' => '772756581',
+            'tel2' => fake()->phoneNumber(),
+            'email' => 'cheikh.keinde@gmail.com',
             'password' => static::$password ??= Hash::make('password'),
+            'adresse' => 'Dakar, Sénégal',
+            'poste' => 'Full-Stack Developer',
+            'link' => fake()->url(),
+            'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
     }
