@@ -24,39 +24,27 @@ RUN sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/Allo
 
 WORKDIR /var/www/html
 
-# Copy composer files and install PHP dependencies
-COPY composer.json composer.lock ./
-RUN composer install --no-dev --optimize-autoloader --no-scripts
-
-# Copy package files and build assets
-COPY package.json package-lock.json* ./
-RUN npm install
-
-# Copy the rest of the application
+# Copy application source
 COPY . .
 
-# Use production env
+# Use Render environment template as default .env
 RUN cp .env.render .env
 
-# Run composer scripts after full copy
-RUN composer dump-autoload --optimize
+# Install dependencies and build frontend assets
+RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist \
+    && npm ci \
+    && npm run build \
+    && npm prune --omit=dev
 
-# Build frontend assets
-RUN npm run build
-
-# Create SQLite database and set permissions
+# Prepare writable directories and sqlite db file
 RUN touch database/database.sqlite \
+    && mkdir -p storage/framework/{cache,sessions,views} \
     && chown -R www-data:www-data storage bootstrap/cache database
 
-# Generate key, run migrations and seed
-RUN php artisan key:generate --force \
-    && php artisan config:clear \
-    && php artisan migrate --force \
-    && php artisan db:seed --force
+# Runtime bootstrap script for Render
+COPY docker/start.sh /usr/local/bin/start.sh
+RUN chmod +x /usr/local/bin/start.sh
 
 EXPOSE 10000
 
-# Render uses dynamic $PORT — configure Apache to listen on it at runtime
-CMD sed -i "s/Listen 80/Listen ${PORT:-10000}/" /etc/apache2/ports.conf \
-    && sed -i "s/:80/:${PORT:-10000}/" /etc/apache2/sites-available/*.conf \
-    && apache2-foreground
+CMD ["/usr/local/bin/start.sh"]
