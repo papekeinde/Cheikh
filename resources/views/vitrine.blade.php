@@ -671,6 +671,26 @@
             color: #ccc;
             font-style: italic;
         }
+        .projet-image-console {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 12px;
+        }
+        .projet-image-console svg {
+            width: 80px;
+            height: 80px;
+            fill: #F16529;
+            opacity: 0.7;
+        }
+        .projet-image-console span {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 600;
+            color: #999;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
         .projet-links {
             display: flex;
             gap: 12px;
@@ -718,9 +738,46 @@
             font-family: 'Inter', sans-serif;
             font-size: 13px;
             color: #000;
-            margin-top: 20px;
             letter-spacing: 0.05em;
             flex-shrink: 0;
+        }
+        .projet-nav {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-top: 20px;
+            flex-shrink: 0;
+        }
+        .projet-nav-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            border: 2px solid #000;
+            background: transparent;
+            color: #000;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            flex-shrink: 0;
+        }
+        .projet-nav-btn:hover {
+            background: #000;
+            color: #F16529;
+        }
+        .projet-nav-btn svg {
+            width: 18px;
+            height: 18px;
+            fill: currentColor;
+        }
+        .projet-nav-btn:disabled {
+            opacity: 0.3;
+            cursor: default;
+        }
+        .projet-nav-btn:disabled:hover {
+            background: transparent;
+            color: #000;
         }
         .projets-progress-bar {
             width: calc(100% - 96px);
@@ -744,15 +801,13 @@
             position: fixed;
             width: 30px;
             height: 30px;
-            background: #fff;
+            background: #000;
             border-radius: 50%;
             pointer-events: none;
             z-index: 9999;
-            mix-blend-mode: difference;
         }
         .cursor-blob.on-projets {
             background: #000;
-            mix-blend-mode: normal;
         }
 
         /* Dark mode horizontal wipe overlay */
@@ -958,7 +1013,15 @@
                     <span class="projet-complexite-value" id="projetComplexiteValue"></span>
                 </div>
                 <div class="projet-links" id="projetLinks"></div>
-                <span class="projet-counter" id="projetCounter"></span>
+                <div class="projet-nav">
+                    <button class="projet-nav-btn" id="projetPrev" aria-label="Projet précédent">
+                        <svg viewBox="0 0 24 24"><path d="M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z"/></svg>
+                    </button>
+                    <span class="projet-counter" id="projetCounter"></span>
+                    <button class="projet-nav-btn" id="projetNext" aria-label="Projet suivant">
+                        <svg viewBox="0 0 24 24"><path d="M8.59 16.59L10 18l6-6-6-6-1.41 1.41L13.17 12z"/></svg>
+                    </button>
+                </div>
             </div>
             <div class="projet-image" id="projetImage">
                 <span class="projet-image-placeholder">image</span>
@@ -1078,7 +1141,7 @@
         });
 
         // Magnetic button deformation with GSAP
-        document.querySelectorAll('.btn-outline, .btn-primary, .btn-connect, .stack-item').forEach(btn => {
+        document.querySelectorAll('.btn-outline, .btn-primary, .btn-connect, .stack-item, .projet-link, .projet-nav-btn, .projets-filter-btn').forEach(btn => {
             btn.style.willChange = 'transform';
 
             btn.addEventListener('mousemove', (e) => {
@@ -1713,6 +1776,8 @@
             const projetTags = document.getElementById('projetTags');
             const projetImage = document.getElementById('projetImage');
             const projetCounter = document.getElementById('projetCounter');
+            const projetPrev = document.getElementById('projetPrev');
+            const projetNext = document.getElementById('projetNext');
             const projetLinks = document.getElementById('projetLinks');
             const projetType = document.getElementById('projetType');
             const projetComplexiteFill = document.getElementById('projetComplexiteFill');
@@ -1783,16 +1848,25 @@
                     projetLinks.appendChild(a);
                 }
                 projetCounter.textContent = (index + 1) + ' / ' + projets.length;
+                projetPrev.disabled = (index === 0);
+                projetNext.disabled = (index === projets.length - 1);
                 if (p.image) {
                     projetImage.innerHTML = '<img src="/' + p.image + '" alt="' + p.titre + '">';
                 } else {
-                    projetImage.innerHTML = '<span class="projet-image-placeholder">image</span>';
+                    const pType = (p.type || 'Web').toLowerCase();
+                    if (pType.includes('console')) {
+                        projetImage.innerHTML = '<div class="projet-image-console"><svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 14H4V8h16v12zM6 10l4 4-4 4h2l3-3 1-1-1-1-3-3H6zm6 6h4v2h-4v-2z"/></svg><span>Application Console</span></div>';
+                    } else {
+                        projetImage.innerHTML = '<span class="projet-image-placeholder">image</span>';
+                    }
                 }
             }
 
             function showProjet(index) {
                 if (index === currentProjetIndex || !projets[index]) return;
                 currentProjetIndex = index;
+
+                progressFill.style.width = ((index + 1) / projets.length * 100) + '%';
 
                 gsap.to('.projet-info', { opacity: 0, x: -30, duration: 0.2, onComplete: () => {
                     setProjet(index);
@@ -1810,6 +1884,13 @@
                 currentProjetIndex = 0;
                 progressFill.style.width = (1 / projets.length * 100) + '%';
             }
+
+            projetPrev.addEventListener('click', () => {
+                if (currentProjetIndex > 0) showProjet(currentProjetIndex - 1);
+            });
+            projetNext.addEventListener('click', () => {
+                if (currentProjetIndex < projets.length - 1) showProjet(currentProjetIndex + 1);
+            });
 
             ScrollTrigger.create({
                 trigger: '#scrollSection9',
