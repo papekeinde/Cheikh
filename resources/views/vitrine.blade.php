@@ -1014,7 +1014,7 @@
             padding: 80px 48px 60px;
             gap: 80px;
             align-items: flex-start;
-            min-height: 100vh;
+            flex: 1;
         }
         .contact-left {
             flex: 1;
