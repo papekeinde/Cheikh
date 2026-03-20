@@ -31,7 +31,7 @@ class UserFactory extends Factory
             'tel1' => '772756581',
             'tel2' => '+1(438) 465-8983',
             'email' => 'pkeinde6@gmail.com',
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => 'password',
             'adresse' => 'Dakar, Sénégal',
             'poste' => 'Full-Stack Developer',
             'link' => fake()->url(),
