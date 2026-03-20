@@ -112,12 +112,46 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
+
+        /* Dark mode */
+        html.dark body {
+            background: linear-gradient(180deg, #0f172a 0%, #1e293b 16%, #0f172a 100%) !important;
+            color: #e2e8f0;
+        }
+        html.dark #sidebar {
+            background-color: rgba(15, 23, 42, 0.94) !important;
+            border-color: #334155 !important;
+            box-shadow: 20px 0 60px -40px rgba(0, 0, 0, 0.5) !important;
+        }
+        html.dark header {
+            background: rgba(15, 23, 42, 0.8) !important;
+            border-color: #334155 !important;
+        }
+        html.dark .menu-item-inactive { color: #94a3b8; }
+        html.dark .menu-item-inactive:hover {
+            background-color: rgba(241, 101, 41, 0.15);
+            color: #f1f5f9;
+        }
+        html.dark .menu-item-active { color: #fff !important; }
+        html.dark .rounded-xl.border { border-color: #334155; }
+        html.dark .bg-white\/80 { background: rgba(15, 23, 42, 0.8) !important; }
+        html.dark .text-slate-950 { color: #f1f5f9; }
+        html.dark .text-gray-500 { color: #94a3b8; }
+        html.dark .border-gray-200 { border-color: #334155; }
+        html.dark .text-gray-700 { color: #cbd5e1; }
+        html.dark .bg-green-50 { background-color: rgba(34, 197, 94, 0.1); }
+        html.dark .bg-red-50 { background-color: rgba(239, 68, 68, 0.1); }
+        html.dark .hover\:bg-orange-50:hover { background-color: rgba(241, 101, 41, 0.15) !important; }
+        html.dark .bg-white { background-color: #1e293b !important; }
+        html.dark .shadow-xl { box-shadow: 0 20px 25px -5px rgba(0,0,0,0.4) !important; }
+        html.dark .hover\:bg-red-50:hover { background-color: rgba(239, 68, 68, 0.15) !important; }
     </style>
 
     <script>
         (function() {
-            localStorage.setItem('theme', 'light');
-            document.documentElement.classList.remove('dark');
+            var theme = localStorage.getItem('theme') || 'light';
+            if (theme === 'dark') document.documentElement.classList.add('dark');
+            else document.documentElement.classList.remove('dark');
         })();
     </script>
 </head>
@@ -134,11 +168,15 @@
             setHovered(val) { if (!this.isExpanded && window.innerWidth >= 1280) this.isHovered = val; }
         });
         Alpine.store('theme', {
-            mode: 'light',
+            mode: localStorage.getItem('theme') || 'light',
             toggle() {
-                this.mode = 'light';
-                localStorage.setItem('theme', 'light');
-                document.documentElement.classList.remove('dark');
+                this.mode = this.mode === 'light' ? 'dark' : 'light';
+                localStorage.setItem('theme', this.mode);
+                if (this.mode === 'dark') {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
             }
         });
       ">

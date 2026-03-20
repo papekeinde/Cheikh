@@ -12,5 +12,8 @@ class Visit extends Model
         'method',
         'user_agent',
         'referer',
+        'country',
+        'city',
+        'region',
     ];
 }

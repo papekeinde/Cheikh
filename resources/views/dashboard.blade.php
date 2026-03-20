@@ -108,6 +108,52 @@
             background: #ffffff;
             padding: 1rem 1.1rem;
         }
+
+        /* Dark mode */
+        html.dark .stat-card {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, #1e293b 100%);
+            border-color: #334155;
+            box-shadow: 0 28px 60px -42px rgba(0, 0, 0, 0.5);
+        }
+        html.dark .stat-card__label { color: #94a3b8; }
+        html.dark .stat-card__value { color: #f1f5f9; }
+        html.dark .moderation-shell {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.98) 18%, #1e293b 100%);
+            border-color: #334155;
+            box-shadow: 0 32px 80px -52px rgba(0, 0, 0, 0.5);
+        }
+        html.dark .project-review-card {
+            border-color: #334155;
+            background: #1e293b;
+            box-shadow: 0 18px 40px -34px rgba(0, 0, 0, 0.5);
+        }
+        html.dark .soft-panel {
+            background: #0f172a;
+            border-color: #334155;
+        }
+        html.dark .soft-input {
+            background: #0f172a;
+            border-color: #334155;
+            color: #f1f5f9;
+        }
+        html.dark .soft-input:focus {
+            border-color: #f16529;
+            box-shadow: 0 0 0 4px rgba(241, 101, 41, 0.2);
+        }
+        html.dark .message-card {
+            border-color: #334155;
+            background: #1e293b;
+        }
+        html.dark .empty-state {
+            border-color: #334155;
+            background: rgba(30, 41, 59, 0.72);
+            color: #94a3b8;
+        }
+        html.dark .section-action { color: #ffffff; }
+        html.dark .chart-card {
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, #1e293b 100%);
+            border-color: #334155;
+        }
     </style>
 @endpush
 
@@ -118,28 +164,28 @@
         <section class="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
             @if(auth()->user()->isAdmin())
                 <div class="stat-card">
+                    <p class="stat-card__label">Visites aujourd'hui</p>
+                    <p class="stat-card__value">{{ $todayVisits }}</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-card__label">Uniques aujourd'hui</p>
+                    <p class="stat-card__value">{{ $todayUnique }}</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-card__label">Total visites</p>
+                    <p class="stat-card__value">{{ $totalVisits }}</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-card__label">Visiteurs uniques</p>
+                    <p class="stat-card__value">{{ $totalUnique }}</p>
+                </div>
+                <div class="stat-card">
                     <p class="stat-card__label">Projets en attente</p>
                     <p class="stat-card__value">{{ $pendingProjects->count() }}</p>
                 </div>
                 <div class="stat-card">
                     <p class="stat-card__label">Projets approuvés</p>
                     <p class="stat-card__value">{{ $approvedProjectsCount }}</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-card__label">Utilisateurs inscrits</p>
-                    <p class="stat-card__value">{{ $usersCount }}</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-card__label">Visites aujourd'hui</p>
-                    <p class="stat-card__value">{{ $todayVisits }}</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-card__label">Visiteurs uniques (aujourd'hui)</p>
-                    <p class="stat-card__value">{{ $todayUnique }}</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-card__label">Total visites</p>
-                    <p class="stat-card__value">{{ $totalVisits }}</p>
                 </div>
             @else
                 <div class="stat-card">
@@ -161,10 +207,88 @@
         </section>
 
         @if(auth()->user()->isAdmin())
+            {{-- ═══ GRAPHIQUES ═══ --}}
+            <section class="grid gap-6 lg:grid-cols-2">
+                <div class="stat-card chart-card" style="border-radius:1.75rem;">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4" style="font-family:'Playfair Display',serif">Visites — 7 derniers jours</h3>
+                    <div style="height:240px"><canvas id="visitsChart"></canvas></div>
+                </div>
+                <div class="stat-card chart-card" style="border-radius:1.75rem;">
+                    <h3 class="text-lg font-semibold text-slate-800 mb-4" style="font-family:'Playfair Display',serif">Distribution horaire</h3>
+                    <div style="height:240px"><canvas id="hourlyChart"></canvas></div>
+                </div>
+            </section>
+
+            {{-- ═══ LOCALISATIONS + PROFILS VISITEURS ═══ --}}
+            <section class="grid gap-6 lg:grid-cols-2">
+                {{-- Top localisations --}}
+                <div class="moderation-shell p-6">
+                    <h3 class="text-xl font-display text-slate-950 mb-4">Top localisations</h3>
+                    @if($topLocations->count())
+                        <div class="space-y-3">
+                            @foreach($topLocations as $loc)
+                                @php $pct = $topLocations->max('visit_count') > 0 ? ($loc->visit_count / $topLocations->max('visit_count')) * 100 : 0; @endphp
+                                <div>
+                                    <div class="flex items-center justify-between mb-1">
+                                        <span class="text-sm text-slate-700">{{ $loc->country }}{{ $loc->city ? ' — '.$loc->city : '' }}</span>
+                                        <span class="text-sm font-bold" style="color:#f16529">{{ $loc->visit_count }}</span>
+                                    </div>
+                                    <div class="h-2 rounded-full bg-slate-100 overflow-hidden">
+                                        <div class="h-full rounded-full" style="width:{{ $pct }}%; background: linear-gradient(90deg, #f16529, #fb923c)"></div>
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="text-sm text-slate-400">Les données de localisation seront collectées avec les prochaines visites.</p>
+                    @endif
+                </div>
+
+                {{-- Profils visiteurs --}}
+                <div class="moderation-shell p-6">
+                    <h3 class="text-xl font-display text-slate-950 mb-4">Profils visiteurs</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="border-b border-slate-200 text-left">
+                                    <th class="pb-2 pr-3 font-semibold text-slate-600">Visiteur</th>
+                                    <th class="pb-2 pr-3 font-semibold text-slate-600">Lieu</th>
+                                    <th class="pb-2 pr-3 font-semibold text-slate-600">Visites</th>
+                                    <th class="pb-2 pr-3 font-semibold text-slate-600">Première</th>
+                                    <th class="pb-2 font-semibold text-slate-600">Dernière</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @forelse($visitors as $v)
+                                    <tr class="border-b border-slate-100">
+                                        <td class="py-2 pr-3 text-slate-500 font-mono text-xs">{{ Str::limit($v->ip_hash, 12) }}</td>
+                                        <td class="py-2 pr-3 text-slate-700 whitespace-nowrap">
+                                            @if($v->country)
+                                                {{ $v->country }}{{ $v->city ? ' · '.$v->city : '' }}
+                                            @else
+                                                <span class="text-slate-400">—</span>
+                                            @endif
+                                        </td>
+                                        <td class="py-2 pr-3 font-bold" style="color:#f16529">{{ $v->visit_count }}</td>
+                                        <td class="py-2 pr-3 text-slate-500 whitespace-nowrap">{{ \Carbon\Carbon::parse($v->first_visit)->format('d/m H:i') }}</td>
+                                        <td class="py-2 text-slate-500 whitespace-nowrap">{{ \Carbon\Carbon::parse($v->last_visit)->diffForHumans() }}</td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="5" class="py-6 text-center text-slate-400">Aucun visiteur.</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            {{-- ═══ VISITES RÉCENTES ═══ --}}
             <section class="moderation-shell p-6 md:p-8">
                 <div class="mb-6">
                     <h2 class="text-3xl font-display text-slate-950">Visites récentes</h2>
-                    <p class="mt-2 text-sm text-slate-500">Les 30 dernières visites sur le portfolio. Les données sont réinitialisées à chaque redéploiement.</p>
+                    <p class="mt-2 text-sm text-slate-500">Les 30 dernières visites sur le portfolio.</p>
                 </div>
 
                 <div class="overflow-x-auto">
@@ -172,6 +296,7 @@
                         <thead>
                             <tr class="border-b border-slate-200 text-left">
                                 <th class="pb-3 pr-4 font-semibold text-slate-600">Date</th>
+                                <th class="pb-3 pr-4 font-semibold text-slate-600">Lieu</th>
                                 <th class="pb-3 pr-4 font-semibold text-slate-600">Page</th>
                                 <th class="pb-3 pr-4 font-semibold text-slate-600">Referrer</th>
                                 <th class="pb-3 font-semibold text-slate-600">Navigateur</th>
@@ -181,13 +306,20 @@
                             @forelse($recentVisits as $visit)
                                 <tr class="border-b border-slate-100">
                                     <td class="py-2.5 pr-4 whitespace-nowrap text-slate-700">{{ $visit->created_at->format('d/m H:i:s') }}</td>
+                                    <td class="py-2.5 pr-4 text-slate-700 whitespace-nowrap">
+                                        @if($visit->country)
+                                            {{ $visit->country }}{{ $visit->city ? ' · '.$visit->city : '' }}
+                                        @else
+                                            <span class="text-slate-400">—</span>
+                                        @endif
+                                    </td>
                                     <td class="py-2.5 pr-4 text-slate-700">{{ $visit->path ?: '/' }}</td>
                                     <td class="py-2.5 pr-4 text-slate-500 max-w-[200px] truncate">{{ $visit->referer ?: '-' }}</td>
                                     <td class="py-2.5 text-slate-500 max-w-[250px] truncate">{{ Str::limit($visit->user_agent, 60) }}</td>
                                 </tr>
                             @empty
                                 <tr>
-                                    <td colspan="4" class="py-8 text-center text-slate-400">Aucune visite enregistrée.</td>
+                                    <td colspan="5" class="py-8 text-center text-slate-400">Aucune visite enregistrée.</td>
                                 </tr>
                             @endforelse
                         </tbody>
@@ -329,4 +461,91 @@
             </section>
         @endif
     </div>
+
+@if(auth()->user()->isAdmin())
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4"></script>
+<script>
+    const brandColor = '#F16529';
+    const brandLight = 'rgba(241, 101, 41, 0.15)';
+    const blueColor = '#3b82f6';
+    const blueLight = 'rgba(59, 130, 246, 0.15)';
+    const isDark = document.documentElement.classList.contains('dark');
+    const gridColor = isDark ? 'rgba(148,163,184,0.12)' : 'rgba(0,0,0,0.06)';
+    const tickColor = isDark ? '#94a3b8' : '#64748b';
+
+    Chart.defaults.color = tickColor;
+    Chart.defaults.borderColor = gridColor;
+
+    // Visits line chart
+    const visitsData = @json($last7Days);
+    new Chart(document.getElementById('visitsChart'), {
+        type: 'line',
+        data: {
+            labels: visitsData.map(d => d.label),
+            datasets: [
+                {
+                    label: 'Total',
+                    data: visitsData.map(d => d.total),
+                    borderColor: brandColor,
+                    backgroundColor: brandLight,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: brandColor,
+                    borderWidth: 2,
+                },
+                {
+                    label: 'Uniques',
+                    data: visitsData.map(d => d.unique),
+                    borderColor: blueColor,
+                    backgroundColor: blueLight,
+                    fill: true,
+                    tension: 0.4,
+                    pointRadius: 5,
+                    pointBackgroundColor: blueColor,
+                    borderWidth: 2,
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'bottom', labels: { usePointStyle: true, padding: 16, font: { size: 12 } } }
+            },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+
+    // Hourly bar chart
+    const hourlyData = @json($hourlyData);
+    new Chart(document.getElementById('hourlyChart'), {
+        type: 'bar',
+        data: {
+            labels: Array.from({length: 24}, (_, i) => i + 'h'),
+            datasets: [{
+                label: 'Visites',
+                data: hourlyData,
+                backgroundColor: brandLight,
+                borderColor: brandColor,
+                borderWidth: 1,
+                borderRadius: 6,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                y: { beginAtZero: true, ticks: { stepSize: 1 } }
+            }
+        }
+    });
+</script>
+@endpush
+@endif
+
 @endsection

@@ -39,7 +39,44 @@ class DashboardController extends Controller
             $todayVisits = Visit::where('created_at', '>=', $todayStart)->count();
             $todayUnique = Visit::where('created_at', '>=', $todayStart)->distinct('ip_hash')->count('ip_hash');
             $totalVisits = Visit::count();
+            $totalUnique = Visit::distinct('ip_hash')->count('ip_hash');
             $recentVisits = Visit::latest()->take(30)->get();
+
+            // Last 7 days chart data
+            $last7Days = collect(range(6, 0))->map(function ($daysAgo) {
+                $date = now()->subDays($daysAgo);
+                return [
+                    'label' => $date->format('d/m'),
+                    'total' => Visit::whereDate('created_at', $date->toDateString())->count(),
+                    'unique' => Visit::whereDate('created_at', $date->toDateString())->distinct('ip_hash')->count('ip_hash'),
+                ];
+            });
+
+            // Hourly distribution (database-agnostic)
+            $allVisitsHours = Visit::pluck('created_at');
+            $hourlyRaw = $allVisitsHours->groupBy(fn($dt) => (int) $dt->format('H'))
+                ->map(fn($g) => $g->count())
+                ->toArray();
+            $hourlyData = [];
+            for ($h = 0; $h < 24; $h++) {
+                $hourlyData[] = $hourlyRaw[$h] ?? 0;
+            }
+
+            // Top locations
+            $topLocations = Visit::selectRaw("country, city, COUNT(*) as visit_count")
+                ->whereNotNull('country')
+                ->where('country', '!=', 'Local')
+                ->groupBy('country', 'city')
+                ->orderByDesc('visit_count')
+                ->limit(10)
+                ->get();
+
+            // Unique visitor profiles
+            $visitors = Visit::selectRaw("ip_hash, COUNT(*) as visit_count, MIN(created_at) as first_visit, MAX(created_at) as last_visit, MAX(country) as country, MAX(city) as city, MAX(region) as region")
+                ->groupBy('ip_hash')
+                ->orderByDesc('visit_count')
+                ->limit(20)
+                ->get();
 
             return view('dashboard', [
                 'submittedProjects' => Projet::with('user')->latest()->get(),
@@ -50,7 +87,12 @@ class DashboardController extends Controller
                 'todayVisits' => $todayVisits,
                 'todayUnique' => $todayUnique,
                 'totalVisits' => $totalVisits,
+                'totalUnique' => $totalUnique,
                 'recentVisits' => $recentVisits,
+                'last7Days' => $last7Days,
+                'hourlyData' => $hourlyData,
+                'topLocations' => $topLocations,
+                'visitors' => $visitors,
             ]);
         }
 
