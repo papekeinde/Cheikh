@@ -38,6 +38,11 @@ php artisan cache:clear || true
 php artisan package:discover --ansi || true
 
 # Never block startup on migration issues; app should still boot
-php artisan migrate --force --no-interaction || true
+if [ "${DB_DRIVER}" = "sqlite" ]; then
+  # SQLite: fresh migrate + seed on each deploy (Render filesystem is ephemeral)
+  php artisan migrate:fresh --seed --force --no-interaction || true
+else
+  php artisan migrate --force --no-interaction || true
+fi
 
 exec apache2-foreground

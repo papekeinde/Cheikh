@@ -21,6 +21,12 @@ return new class extends Migration
             $table->string('github')->nullable();
             $table->json('tags');
             $table->integer('ordre')->default(0);
+            $table->integer('complexite')->default(50);
+            $table->string('type')->default('Web');
+            $table->string('status')->default('pending');
+            $table->integer('progress')->default(0);
+            $table->text('admin_feedback')->nullable();
+            $table->timestamp('approved_at')->nullable();
             $table->timestamps();
         });
     }

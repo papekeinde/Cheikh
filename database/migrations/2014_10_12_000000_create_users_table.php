@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('adresse')->nullable();
             $table->string('poste')->nullable();
             $table->string('link')->nullable();
+            $table->string('role')->default('user');
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
             $table->rememberToken();

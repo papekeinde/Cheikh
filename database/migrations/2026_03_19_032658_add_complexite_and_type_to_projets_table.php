@@ -11,6 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
+        if (Schema::hasColumn('projets', 'complexite')) {
+            return;
+        }
         Schema::table('projets', function (Blueprint $table) {
             $table->integer('complexite')->default(50)->after('ordre');
             $table->string('type')->default('Web')->after('complexite');
