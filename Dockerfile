@@ -28,9 +28,17 @@ COPY . .
 # Use Render environment template as default .env
 RUN cp .env.render .env
 
-# Install dependencies and build frontend assets
+# Install Node.js for Vite build
+RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Install PHP dependencies
 RUN composer install --no-dev --optimize-autoloader --no-interaction --prefer-dist --no-scripts \
     && php artisan storage:link || true
+
+# Build frontend assets with Vite
+RUN npm ci --no-audit && npm run build
 
 # Prepare writable directories
 RUN mkdir -p storage/framework/{cache,sessions,views} database \
