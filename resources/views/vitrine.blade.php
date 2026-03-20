@@ -17,6 +17,7 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { overflow-x: clip; }
 
         :root {
             --accent: #f16529;
@@ -461,7 +462,7 @@
             left: 0;
             width: 0%;
             height: 100vh;
-            background: #f3f4f6;
+            background: var(--bg-color);
             z-index: 280;
             pointer-events: none;
         }
@@ -530,6 +531,14 @@
         .stack-item:hover {
             box-shadow: 0 8px 30px rgba(0,0,0,0.08);
             border-color: #ccc;
+        }
+        [data-theme="dark"] .stack-item {
+            background: #1a1a1a;
+            border-color: #333;
+        }
+        [data-theme="dark"] .stack-item:hover {
+            border-color: #555;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
         }
         .stack-item svg, .stack-item img {
             width: 32px;
@@ -1529,6 +1538,10 @@
             /* Cursor blob: hidden on touch devices */
             .cursor-blob { display: none !important; }
 
+            /* Scroll hint */
+            .scroll-hint { bottom: 20px; }
+            .scroll-hint span { font-size: 11px; padding: 6px 14px; }
+
             /* Mobile menu must be above all fixed sections */
             .mobile-menu-overlay { z-index: 1100; }
             .hamburger { z-index: 1101; }
@@ -1604,6 +1617,10 @@
 
             .mobile-menu-overlay a { font-size: 22px; }
             .mobile-menu-overlay { gap: 24px; }
+
+            /* Scroll hint */
+            .scroll-hint { bottom: 14px; }
+            .scroll-hint span { font-size: 10px; padding: 5px 12px; }
         }
     </style>
 </head>
@@ -1976,12 +1993,16 @@
             localStorage.setItem('theme', newTheme);
         });
 
-        // Mouse Cursor Blob with GSAP
+        // Mouse Cursor Blob with GSAP (desktop only)
         const cursorBlob = document.getElementById('cursorBlob');
         let mouseX = 0, mouseY = 0;
         let blobX = 0, blobY = 0;
         let prevBlobX = 0, prevBlobY = 0;
         let smoothVx = 0, smoothVy = 0;
+
+        const isTouch = window.matchMedia('(max-width: 768px)').matches || 'ontouchstart' in window;
+
+        if (!isTouch) {
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
@@ -2088,6 +2109,7 @@
                 gsap.to(cursorBlob, { width: 30, height: 30, borderRadius: '50%', duration: 0.3, ease: 'power2.out' });
             });
         });
+        } // end if (!isTouch)
 
         // Smooth scroll for ALL anchor links (navbar + hero button + mobile menu)
         // Map fixed-position sections to their ScrollTrigger trigger elements
@@ -2282,17 +2304,18 @@
                 },
                 onUpdate: (self) => {
                     const progress = self.progress;
+                    const mob = window.innerWidth < 768;
 
                     if (progress > 0.01) {
                         heroText.classList.add('is-morphing');
 
-                        // Target: left 48px, vertically centered
-                        const targetX = 48;
+                        // Target: left padding, vertically centered
+                        const targetX = mob ? 16 : 48;
                         const targetY = window.innerHeight / 2;
 
                         currentMorphX = startX + (targetX - startX) * progress;
                         currentMorphY = startY + (targetY - startY) * progress;
-                        currentMorphScale = 1 + progress * 0.6;
+                        currentMorphScale = 1 + progress * (mob ? 0.15 : 0.6);
 
                         gsap.set(heroText, {
                             left: currentMorphX,
@@ -2414,15 +2437,16 @@
                 scrub: 0.5,
                 onUpdate: (self) => {
                     const progress = self.progress;
+                    const mob = window.innerWidth < 768;
 
                     if (progress > 0.01) {
                         aboutText.style.opacity = '1';
 
                         // Layout morph: position + scale transition
-                        const startAboutX = window.innerWidth - 200;
-                        const endAboutX = 48;
+                        const startAboutX = mob ? window.innerWidth * 0.5 : window.innerWidth - 200;
+                        const endAboutX = mob ? 16 : 48;
                         const startAboutY = 90;
-                        const endAboutY = window.innerHeight / 2;
+                        const endAboutY = mob ? window.innerHeight * 0.35 : window.innerHeight / 2;
 
                         const currentAboutX = startAboutX + (endAboutX - startAboutX) * progress;
                         const currentAboutY = startAboutY + (endAboutY - startAboutY) * progress;
@@ -2484,13 +2508,21 @@
                             w.style.opacity = '0';
                             w.style.transform = 'translateY(18px)';
                         });
-                        aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
+                        if (window.innerWidth < 768) {
+                            aboutContent.style.transform = `translateY(40px)`;
+                        } else {
+                            aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
+                        }
                         return;
                     }
 
                     // Container slides up
                     const slideUp = (1 - progress) * 40;
-                    aboutContent.style.transform = `translateY(calc(-50% + ${slideUp}px))`;
+                    if (window.innerWidth < 768) {
+                        aboutContent.style.transform = `translateY(${slideUp}px)`;
+                    } else {
+                        aboutContent.style.transform = `translateY(calc(-50% + ${slideUp}px))`;
+                    }
 
                     // Word-by-word reveal staggered across scroll progress
                     const total = aboutWordEls.length;
@@ -2507,7 +2539,11 @@
                         w.style.opacity = '0';
                         w.style.transform = 'translateY(18px)';
                     });
-                    aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
+                    if (window.innerWidth < 768) {
+                        aboutContent.style.transform = `translateY(40px)`;
+                    } else {
+                        aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
+                    }
                 }
             });
 
@@ -2554,7 +2590,7 @@
             const cursusChars = cursusText.querySelectorAll('.cursus-char');
 
             // Start x-offset (off-screen to the right relative to natural right:48px position)
-            const CURSUS_START_X = window.innerWidth + 300;
+            const CURSUS_START_X = window.innerWidth < 768 ? window.innerWidth + 100 : window.innerWidth + 300;
 
             ScrollTrigger.create({
                 trigger: '#cursus',
