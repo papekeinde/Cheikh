@@ -26,3 +26,9 @@ remote-laravel-log.txt
 app-source-count.txt
 ftp-*.txt
 http-check.txt
+cookies*.txt
+git_push_*.txt
+git_fetch_*.txt
+*.bak
+test_*.php
+supabase_migrations.sql

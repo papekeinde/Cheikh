@@ -8,6 +8,15 @@ if [ ! -f .env ] && [ -f .env.render ]; then
   cp .env.render .env
 fi
 
+# Force SQLite: override any Render dashboard env vars that may be set to pgsql
+export DB_CONNECTION=sqlite
+export DB_DATABASE=/var/www/html/database/database.sqlite
+unset DATABASE_URL DB_HOST DB_PORT DB_USERNAME DB_PASSWORD DB_SSLMODE
+
+# Also update .env file so config:cache picks up the correct values
+sed -i 's/^DB_CONNECTION=.*/DB_CONNECTION=sqlite/' .env
+sed -i 's|^DB_DATABASE=.*|DB_DATABASE=/var/www/html/database/database.sqlite|' .env
+
 # Render exposes dynamic PORT
 PORT_TO_USE="${PORT:-10000}"
 sed -i "s/Listen 80/Listen ${PORT_TO_USE}/" /etc/apache2/ports.conf
@@ -16,13 +25,10 @@ sed -i "s/:80/:${PORT_TO_USE}/" /etc/apache2/sites-available/*.conf
 # Ensure writable paths
 mkdir -p storage/framework/cache storage/framework/sessions storage/framework/views bootstrap/cache
 
-# Create sqlite database file only when sqlite is selected
-DB_DRIVER="$(grep -E '^DB_CONNECTION=' .env | cut -d '=' -f2 | tr -d '[:space:]')"
-if [ "${DB_DRIVER}" = "sqlite" ]; then
-  mkdir -p database
-  touch database/database.sqlite
-  chown -R www-data:www-data database
-fi
+DB_DRIVER="sqlite"
+mkdir -p database
+touch database/database.sqlite
+chown -R www-data:www-data database
 
 chown -R www-data:www-data storage bootstrap/cache
 

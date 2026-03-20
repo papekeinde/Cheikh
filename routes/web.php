@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [UserController::class, 'index'])->name('vitrine');
+Route::get('/', [UserController::class, 'index'])->middleware('track')->name('vitrine');
 
 Route::get('/__health', function () {
     return response()->json([
@@ -66,6 +66,8 @@ Route::get('/__debug-db', function () {
         return response()->json([
             'status' => 'ok',
             'driver' => $driver,
+            'db_connection_env' => env('DB_CONNECTION'),
+            'db_database_env' => env('DB_DATABASE'),
             'tables' => $tables,
             'user_count' => $userCount,
             'projet_count' => $projetCount,
@@ -76,6 +78,8 @@ Route::get('/__debug-db', function () {
             'exception' => get_class($e),
             'message' => $e->getMessage(),
             'driver' => config('database.default'),
+            'db_connection_env' => env('DB_CONNECTION'),
+            'db_database_env' => env('DB_DATABASE'),
         ], 500);
     }
 });

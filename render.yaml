@@ -16,21 +16,13 @@ services:
       - key: APP_URL
         sync: false
       - key: DB_CONNECTION
-        value: pgsql
-      - key: DATABASE_URL
-        sync: false
-      - key: DB_HOST
-        sync: false
-      - key: DB_PORT
-        value: "6543"
+        value: sqlite
       - key: DB_DATABASE
-        sync: false
-      - key: DB_USERNAME
-        sync: false
-      - key: DB_PASSWORD
-        sync: false
-      - key: DB_SSLMODE
-        value: require
+        value: /var/www/html/database/database.sqlite
+      - key: SUPABASE_URL
+        value: https://npfuctogigxiivvqtuhs.supabase.co
+      - key: SUPABASE_ANON_KEY
+        value: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5wZnVjdG9naWd4aWl2dnF0dWhzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM5NDAxNzYsImV4cCI6MjA4OTUxNjE3Nn0.jVGc0tKJRkRsAVB11F-WQBby4FCDfly6N_7k5nLPgjI
       - key: MAIL_MAILER
         value: smtp
       - key: MAIL_HOST

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Projet;
+use App\Models\Visit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\View\View;
@@ -33,13 +34,23 @@ class DashboardController extends Controller
         }
 
         if ($user->isAdmin()) {
+            $todayStart = now()->startOfDay();
+
+            $todayVisits = Visit::where('created_at', '>=', $todayStart)->count();
+            $todayUnique = Visit::where('created_at', '>=', $todayStart)->distinct('ip_hash')->count('ip_hash');
+            $totalVisits = Visit::count();
+            $recentVisits = Visit::latest()->take(30)->get();
+
             return view('dashboard', [
                 'submittedProjects' => Projet::with('user')->latest()->get(),
                 'pendingProjects' => Projet::with('user')->pending()->latest()->get(),
                 'approvedProjectsCount' => Projet::approved()->count(),
-                'usersCount' =>
-                    \App\Models\User::count(),
+                'usersCount' => \App\Models\User::count(),
                 'contactMessages' => $contactMessages,
+                'todayVisits' => $todayVisits,
+                'todayUnique' => $todayUnique,
+                'totalVisits' => $totalVisits,
+                'recentVisits' => $recentVisits,
             ]);
         }
 

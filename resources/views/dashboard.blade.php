@@ -115,7 +115,7 @@
 
 @section('content')
     <div class="space-y-8">
-        <section class="grid gap-4 md:grid-cols-3">
+        <section class="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
             @if(auth()->user()->isAdmin())
                 <div class="stat-card">
                     <p class="stat-card__label">Projets en attente</p>
@@ -128,6 +128,18 @@
                 <div class="stat-card">
                     <p class="stat-card__label">Utilisateurs inscrits</p>
                     <p class="stat-card__value">{{ $usersCount }}</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-card__label">Visites aujourd'hui</p>
+                    <p class="stat-card__value">{{ $todayVisits }}</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-card__label">Visiteurs uniques (aujourd'hui)</p>
+                    <p class="stat-card__value">{{ $todayUnique }}</p>
+                </div>
+                <div class="stat-card">
+                    <p class="stat-card__label">Total visites</p>
+                    <p class="stat-card__value">{{ $totalVisits }}</p>
                 </div>
             @else
                 <div class="stat-card">
@@ -149,6 +161,40 @@
         </section>
 
         @if(auth()->user()->isAdmin())
+            <section class="moderation-shell p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-display text-slate-950">Visites récentes</h2>
+                    <p class="mt-2 text-sm text-slate-500">Les 30 dernières visites sur le portfolio. Les données sont réinitialisées à chaque redéploiement.</p>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                        <thead>
+                            <tr class="border-b border-slate-200 text-left">
+                                <th class="pb-3 pr-4 font-semibold text-slate-600">Date</th>
+                                <th class="pb-3 pr-4 font-semibold text-slate-600">Page</th>
+                                <th class="pb-3 pr-4 font-semibold text-slate-600">Referrer</th>
+                                <th class="pb-3 font-semibold text-slate-600">Navigateur</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse($recentVisits as $visit)
+                                <tr class="border-b border-slate-100">
+                                    <td class="py-2.5 pr-4 whitespace-nowrap text-slate-700">{{ $visit->created_at->format('d/m H:i:s') }}</td>
+                                    <td class="py-2.5 pr-4 text-slate-700">{{ $visit->path ?: '/' }}</td>
+                                    <td class="py-2.5 pr-4 text-slate-500 max-w-[200px] truncate">{{ $visit->referer ?: '-' }}</td>
+                                    <td class="py-2.5 text-slate-500 max-w-[250px] truncate">{{ Str::limit($visit->user_agent, 60) }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="py-8 text-center text-slate-400">Aucune visite enregistrée.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
             <section class="moderation-shell p-6 md:p-8">
                 <div class="flex items-center justify-between gap-4 mb-6">
                     <div>
