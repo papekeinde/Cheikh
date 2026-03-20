@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <script>if(localStorage.getItem('theme')==='dark')document.documentElement.setAttribute('data-theme','dark');</script>
 
     <title>{{ optional($user)->nom ?? 'Cheikh Keinde' }}</title>
 
@@ -1163,25 +1164,188 @@
             color: #ef4444;
         }
 
+        /* ===== SCROLL HINT ===== */
+        .scroll-hint {
+            position: fixed;
+            bottom: 32px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9998;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
+        }
+        .scroll-hint.visible { opacity: 1; }
+        .scroll-hint span {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: var(--text-color);
+            background: var(--btn-bg);
+            padding: 8px 18px;
+            border-radius: 30px;
+            border: 1px solid var(--btn-border);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .scroll-hint-arrow {
+            width: 20px;
+            height: 20px;
+            border-right: 2px solid var(--text-color);
+            border-bottom: 2px solid var(--text-color);
+            transform: rotate(45deg);
+            animation: scrollBounce 1.5s ease-in-out infinite;
+        }
+        @keyframes scrollBounce {
+            0%, 100% { transform: rotate(45deg) translateY(0); opacity: 1; }
+            50% { transform: rotate(45deg) translateY(6px); opacity: 0.5; }
+        }
+
+        /* ===== HAMBURGER MENU ===== */
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            justify-content: center;
+            gap: 5px;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            z-index: 1002;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+        .hamburger span {
+            display: block;
+            width: 100%;
+            height: 2px;
+            background: var(--text-color);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+        .hamburger.active span:nth-child(1) { transform: rotate(45deg) translate(5px, 5px); }
+        .hamburger.active span:nth-child(2) { opacity: 0; }
+        .hamburger.active span:nth-child(3) { transform: rotate(-45deg) translate(5px, -5px); }
+
+        .mobile-menu-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-color);
+            z-index: 1000;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 32px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .mobile-menu-overlay.open { display: flex; opacity: 1; }
+        .mobile-menu-overlay a {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            font-weight: 400;
+            color: var(--text-color);
+            text-decoration: none;
+            letter-spacing: 0.02em;
+            transition: color 0.3s;
+        }
+        .mobile-menu-overlay a:hover { color: var(--accent); }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1024px) {
+            .navbar { padding: 20px 28px; }
+            .hero { padding: 0 28px 30px 28px; }
+            .projets-header { padding: 0 28px; }
+            .projets-showcase { padding: 0 28px 24px; gap: 28px; }
+            .projets-progress-bar { width: calc(100% - 56px); margin: 0 28px 12px; }
+            .stacks-title { padding: 0 28px; }
+            .about-content { right: 28px; width: 46vw; }
+            .cursus-content { left: 28px; }
+        }
+
         @media (max-width: 768px) {
+            /* Navbar */
+            .nav-links { display: none; }
+            .hamburger { display: flex; }
+            .navbar { padding: 16px 20px; }
+            .btn-connect { padding: 8px 16px; font-size: 11px; }
+
+            /* Hero */
+            .hero { padding: 0 20px 24px 20px; }
+            .hero-photo { width: 100%; height: 60%; opacity: 0.3; }
+            .hero-title { font-size: clamp(3rem, 16vw, 6rem) !important; }
+            .hero-subtitle { font-size: clamp(3rem, 16vw, 6rem) !important; }
+            .hero-bottom { flex-direction: column-reverse; align-items: flex-start; gap: 24px; }
+            .hero-text { text-align: left; }
+            .hero-cta { flex-direction: row; }
+
+            /* About */
+            .about-text .about-char { font-size: clamp(2.5rem, 10vw, 4rem) !important; }
+            .about-content { right: 20px; left: 20px; width: auto; max-width: 100%; top: auto; bottom: 10%; transform: none; }
+            .about-content p { font-size: clamp(0.95rem, 3.5vw, 1.2rem); }
+
+            /* Cursus */
+            .cursus-text .cursus-char { font-size: clamp(2.5rem, 10vw, 4rem) !important; }
+            .cursus-content { left: 20px; right: 20px; width: auto; max-width: 100%; }
+
+            /* Stacks */
+            .stacks-title { font-size: clamp(2rem, 8vw, 4rem); padding: 0 20px; margin-bottom: 30px; }
+            .stack-item { padding: 14px 20px; }
+            .stack-item span { font-size: 13px; }
+            .stack-item svg, .stack-item img { width: 24px; height: 24px; }
+
+            /* Projets */
+            .projets-section { padding-top: 60px; }
+            .projets-header { flex-direction: column; align-items: flex-start; gap: 12px; padding: 0 20px; }
+            .projets-title { font-size: clamp(1.5rem, 7vw, 2.5rem); }
+            .projets-filters { flex-wrap: wrap; gap: 6px; }
+            .projets-filter-btn { font-size: 10px; padding: 6px 12px; }
+            .projets-showcase { flex-direction: column-reverse; padding: 0 20px 16px; gap: 16px; }
+            .projet-image { max-width: 100%; width: 100%; aspect-ratio: 16/9; }
+            .projet-info { width: 100%; }
+            .projet-name { font-size: clamp(1.1rem, 5vw, 1.6rem); margin-bottom: 8px; }
+            .projet-desc { font-size: clamp(0.85rem, 3vw, 1rem); margin-bottom: 12px; }
+            .projets-progress-bar { width: calc(100% - 40px); margin: 0 20px 8px; }
+            .projet-links { gap: 8px; }
+            .projet-link { font-size: 11px; padding: 8px 16px; }
+
+            /* Contact */
             .contact-inner {
                 flex-direction: column;
-                gap: 40px;
-                padding: 0 24px;
+                gap: 32px;
+                padding: 70px 20px 40px;
                 text-align: center;
             }
-            .contact-left p {
-                max-width: 100%;
-            }
-            .contact-item {
-                padding: 16px 20px;
-            }
-            .contact-form-grid {
-                grid-template-columns: 1fr;
-            }
-            .contact-form {
-                padding: 20px;
-            }
+            .contact-left h2 { font-size: clamp(2rem, 8vw, 3rem); }
+            .contact-left p { max-width: 100%; font-size: 14px; }
+            .contact-item { padding: 14px 16px; }
+            .contact-form-grid { grid-template-columns: 1fr; }
+            .contact-form { padding: 16px; }
+
+            /* Cursor blob: hidden on mobile */
+            .cursor-blob { display: none !important; }
+        }
+
+        @media (max-width: 480px) {
+            .navbar { padding: 12px 16px; }
+            .logo-first, .logo-last { font-size: 13px; }
+            .hero { padding: 0 16px 20px 16px; }
+            .hero-title { font-size: clamp(2.5rem, 18vw, 4rem) !important; }
+            .hero-subtitle { font-size: clamp(2.5rem, 18vw, 4rem) !important; }
+            .btn-outline, .btn-primary { padding: 10px 20px; font-size: 11px; }
+            .projets-header { padding: 0 16px; }
+            .projets-showcase { padding: 0 16px 12px; }
+            .projets-progress-bar { width: calc(100% - 32px); margin: 0 16px 8px; }
+            .projets-filters { gap: 4px; }
+            .projets-filter-btn { font-size: 9px; padding: 5px 10px; }
+            .projets-filter-btn svg { width: 12px; height: 12px; }
+            .contact-inner { padding: 60px 16px 30px; }
         }
     </style>
 </head>
@@ -1189,6 +1353,21 @@
 
     <!-- Mouse Cursor Blob -->
     <div class="cursor-blob" id="cursorBlob"></div>
+
+    <!-- Scroll Hint -->
+    <div class="scroll-hint" id="scrollHint">
+        <span>Scroll pour découvrir</span>
+        <div class="scroll-hint-arrow"></div>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div class="mobile-menu-overlay" id="mobileMenuOverlay">
+        <a href="#accueil" class="mobile-nav-link">Accueil</a>
+        <a href="#apropos" class="mobile-nav-link">A propos</a>
+        <a href="#cursus" class="mobile-nav-link">Cursus</a>
+        <a href="#projets" class="mobile-nav-link">Projets</a>
+        <a href="#contact" class="mobile-nav-link">Contact</a>
+    </div>
 
     @php
         $nomComplet = optional($user)->nom ?? 'CHEIKH KEINDE';
@@ -1223,6 +1402,9 @@
             @else
                 <a href="{{ route('login') }}" class="btn-connect">se connecter</a>
             @endauth
+            <button class="hamburger" id="hamburgerBtn" aria-label="Menu">
+                <span></span><span></span><span></span>
+            </button>
         </div>
     </nav>
 
@@ -1484,12 +1666,13 @@
         const themeToggle = document.getElementById('themeToggle');
         const html = document.documentElement;
 
-        // Check saved theme or system preference
+        // Check saved theme — default is always light
         const savedTheme = localStorage.getItem('theme');
-        const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
 
-        if (savedTheme === 'dark' || (!savedTheme && systemPrefersDark)) {
+        if (savedTheme === 'dark') {
             html.setAttribute('data-theme', 'dark');
+        } else {
+            html.removeAttribute('data-theme');
         }
 
         themeToggle.addEventListener('click', () => {
@@ -2849,6 +3032,66 @@
 
             // Refresh ScrollTrigger after setup (recalculate positions once fonts are loaded)
             document.fonts.ready.then(() => ScrollTrigger.refresh());
+
+            // ===== SCROLL HINT: show after inactivity =====
+            const scrollHint = document.getElementById('scrollHint');
+            let scrollHintTimer = null;
+            let scrollHintShown = false;
+            const HINT_DELAY = 5000; // 5 seconds of inactivity
+
+            function hideScrollHint() {
+                if (scrollHint) scrollHint.classList.remove('visible');
+                scrollHintShown = false;
+            }
+
+            function resetScrollHintTimer() {
+                if (scrollHintTimer) clearTimeout(scrollHintTimer);
+                hideScrollHint();
+                // Don't show hint if user has scrolled past the hero
+                if (window.scrollY > window.innerHeight * 0.5) return;
+                scrollHintTimer = setTimeout(() => {
+                    if (window.scrollY < window.innerHeight * 0.5 && scrollHint) {
+                        scrollHint.classList.add('visible');
+                        scrollHintShown = true;
+                    }
+                }, HINT_DELAY);
+            }
+
+            // Start timer on page load
+            resetScrollHintTimer();
+            // Reset on user activity
+            ['scroll', 'mousemove', 'touchstart', 'keydown'].forEach(evt => {
+                window.addEventListener(evt, () => {
+                    if (scrollHintShown) hideScrollHint();
+                    resetScrollHintTimer();
+                }, { passive: true });
+            });
+
+            // ===== HAMBURGER MENU =====
+            const hamburger = document.getElementById('hamburgerBtn');
+            const mobileOverlay = document.getElementById('mobileMenuOverlay');
+
+            if (hamburger && mobileOverlay) {
+                hamburger.addEventListener('click', () => {
+                    hamburger.classList.toggle('active');
+                    mobileOverlay.classList.toggle('open');
+                    document.body.style.overflow = mobileOverlay.classList.contains('open') ? 'hidden' : '';
+                });
+
+                // Close menu on link click
+                mobileOverlay.querySelectorAll('a').forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        hamburger.classList.remove('active');
+                        mobileOverlay.classList.remove('open');
+                        document.body.style.overflow = '';
+                        const target = document.querySelector(link.getAttribute('href'));
+                        if (target) {
+                            setTimeout(() => target.scrollIntoView({ behavior: 'smooth' }), 100);
+                        }
+                    });
+                });
+            }
         });
     </script>
 
