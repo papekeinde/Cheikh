@@ -84,6 +84,26 @@ Route::get('/__debug-db', function () {
     }
 });
 
+Route::get('/__debug-seed', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', ['--seed' => true, '--force' => true]);
+        $output = \Illuminate\Support\Facades\Artisan::output();
+        return response()->json([
+            'status' => 'ok',
+            'output' => $output,
+            'user_count' => \Illuminate\Support\Facades\DB::table('users')->count(),
+            'projet_count' => \Illuminate\Support\Facades\DB::table('projets')->count(),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'exception' => get_class($e),
+            'message' => $e->getMessage(),
+            'trace' => collect(explode("\n", $e->getTraceAsString()))->take(15)->all(),
+        ], 500);
+    }
+});
+
 Route::get('/contact', function () {
     return view('contact');
 })->name('contact');

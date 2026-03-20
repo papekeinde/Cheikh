@@ -12,11 +12,20 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        \App\Models\User::factory()->create([
+        $user = \App\Models\User::create([
+            'nom' => 'Cheikh Keinde',
+            'slogan' => 'Développeur Full-Stack',
+            'description' => 'Développeur Full-Stack passionné, spécialisé en Laravel, Vue.js, C# .NET et solutions web modernes.',
+            'photo' => 'default-avatar.jpg',
+            'tel1' => '772756581',
+            'tel2' => '+1(438) 465-8983',
+            'email' => 'pkeinde6@gmail.com',
+            'password' => 'password',
+            'adresse' => 'Dakar, Sénégal',
+            'poste' => 'Full-Stack Developer',
+            'link' => 'https://github.com/papechk',
             'role' => 'superadmin',
         ]);
-
-        $user = \App\Models\User::first();
 
         \App\Models\Projet::insert([
             [
