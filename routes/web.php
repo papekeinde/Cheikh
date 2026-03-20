@@ -49,6 +49,35 @@ Route::get('/__debug-render', function () {
     }
 });
 
+Route::get('/__debug-db', function () {
+    try {
+        $pdo = \Illuminate\Support\Facades\DB::connection('pgsql')->getPdo();
+        $version = $pdo->query('SELECT version()')->fetchColumn();
+        $tables = \Illuminate\Support\Facades\DB::select("SELECT tablename FROM pg_tables WHERE schemaname = 'public'");
+        $userCount = \Illuminate\Support\Facades\DB::table('users')->count();
+        return response()->json([
+            'status' => 'ok',
+            'db_version' => $version,
+            'tables' => array_map(fn($t) => $t->tablename, $tables),
+            'user_count' => $userCount,
+            'dsn_host' => config('database.connections.pgsql.host'),
+            'dsn_port' => config('database.connections.pgsql.port'),
+            'dsn_db' => config('database.connections.pgsql.database'),
+        ]);
+    } catch (\Throwable $e) {
+        return response()->json([
+            'status' => 'error',
+            'exception' => get_class($e),
+            'message' => $e->getMessage(),
+            'file' => basename($e->getFile()),
+            'line' => $e->getLine(),
+            'dsn_host' => config('database.connections.pgsql.host'),
+            'dsn_port' => config('database.connections.pgsql.port'),
+            'dsn_db' => config('database.connections.pgsql.database'),
+        ], 500);
+    }
+});
+
 Route::get('/contact', function () {
     return view('contact');
 })->name('contact');
