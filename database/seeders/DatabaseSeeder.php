@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
                 'titre' => 'MonTerrain',
                 'description' => 'Plateforme de réservation de terrains de sport avec calendrier FullCalendar, système de paiement, confirmation/annulation des réservations, personnalisation du curseur et panneau d\'administration.',
                 'image' => 'images/projets/monterrain.png',
-                'lien' => 'https://monterrain.onrender.com',
+                'lien' => 'https://monterrain-02i2.onrender.com',
                 'github' => 'https://github.com/papechk/monterrain',
                 'tags' => json_encode(['Laravel', 'Breeze', 'FullCalendar', 'Tailwind']),
                 'ordre' => 1,
