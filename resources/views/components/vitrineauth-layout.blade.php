@@ -159,6 +159,12 @@
             opacity: 1;
             color: var(--accent);
         }
+        .nav-links a.active {
+            color: var(--accent);
+        }
+        .nav-links a.active::after {
+            transform: scaleX(1);
+        }
         .nav-links a:hover::after { transform: scaleX(1); }
 
         .nav-right {
@@ -207,8 +213,8 @@
         .theme-toggle svg {
             width: 18px;
             height: 18px;
-            fill: var(--text-color);
-            transition: fill 0.3s;
+            color: var(--text-color);
+            transition: color 0.3s;
         }
         .sun-icon { display: none; }
         .moon-icon { display: block; }
@@ -468,13 +474,19 @@
             @auth
                 <a href="{{ route('dashboard') }}" class="btn-connect">Tableau de bord</a>
             @else
-                <a href="{{ route('login') }}" class="btn-connect">Se connecter</a>
+                @if(request()->routeIs('login'))
+                    <a href="{{ route('register') }}" class="btn-connect">S'inscrire</a>
+                @elseif(request()->routeIs('register'))
+                    <a href="{{ route('login') }}" class="btn-connect">Se connecter</a>
+                @else
+                    <a href="{{ route('login') }}" class="btn-connect">Se connecter</a>
+                @endif
             @endauth
             <button class="theme-toggle" id="theme-toggle">
-                <svg class="sun-icon" viewBox="0 0 24 24">
+                <svg class="sun-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
                 </svg>
-                <svg class="moon-icon" viewBox="0 0 24 24">
+                <svg class="moon-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
                 </svg>
             </button>
