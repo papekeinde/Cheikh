@@ -13,21 +13,30 @@ class UserController extends Controller
      */
     public function index()
     {
-        $user = Schema::hasColumn('users', 'role')
-            ? (User::where('role', 'superadmin')->first() ?? User::first())
-            : User::first();
+        try {
+            $user = Schema::hasColumn('users', 'role')
+                ? (User::where('role', 'superadmin')->first() ?? User::first())
+                : User::first();
 
-        if (!$user) {
+            if (!$user) {
+                $user = new User([
+                    'nom' => 'Cheikh Keinde',
+                    'photo' => null,
+                ]);
+            }
+
+            $projets = \App\Models\Projet::where('user_id', $user?->id)
+                ->approved()
+                ->orderBy('ordre')
+                ->get();
+        } catch (\Throwable $e) {
             $user = new User([
                 'nom' => 'Cheikh Keinde',
                 'photo' => null,
             ]);
+            $projets = collect();
         }
 
-        $projets = \App\Models\Projet::where('user_id', $user?->id)
-            ->approved()
-            ->orderBy('ordre')
-            ->get();
         return view('vitrine', compact('user', 'projets'));
     }
 
