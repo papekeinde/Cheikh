@@ -1164,6 +1164,113 @@
             color: #ef4444;
         }
 
+        /* ===== FOOTER ===== */
+        .site-footer {
+            width: 100%;
+            border-top: 1px solid rgba(128, 128, 128, 0.15);
+            padding: 40px 48px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+            flex-shrink: 0;
+        }
+        .footer-top {
+            display: flex;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 40px;
+        }
+        .footer-brand {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .footer-brand-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-color);
+            letter-spacing: 0.04em;
+        }
+        .footer-brand-role {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+        .footer-nav {
+            display: flex;
+            gap: 28px;
+            flex-wrap: wrap;
+        }
+        .footer-nav a {
+            font-family: 'Inter', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            text-decoration: none;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            transition: color 0.2s;
+        }
+        .footer-nav a:hover {
+            color: #F16529;
+        }
+        .footer-socials {
+            display: flex;
+            gap: 14px;
+        }
+        .footer-socials a {
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(128, 128, 128, 0.25);
+            border-radius: 50%;
+            color: var(--text-color);
+            text-decoration: none;
+            transition: border-color 0.2s, transform 0.2s, background 0.2s;
+        }
+        .footer-socials a:hover {
+            border-color: #F16529;
+            background: rgba(241, 101, 41, 0.08);
+            transform: translateY(-2px);
+        }
+        .footer-socials a svg {
+            width: 16px;
+            height: 16px;
+            fill: var(--text-color);
+        }
+        .footer-bottom {
+            width: 100%;
+            max-width: 1200px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+            padding-top: 16px;
+            border-top: 1px solid rgba(128, 128, 128, 0.1);
+        }
+        .footer-copy {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+        .footer-made {
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            color: var(--text-secondary);
+            opacity: 0.5;
+        }
+        .footer-made span {
+            color: #F16529;
+        }
+
         /* ===== SCROLL HINT ===== */
         .scroll-hint {
             position: fixed;
@@ -1411,6 +1518,14 @@
             .contact-form textarea { min-height: 100px; }
             .contact-form button { padding: 12px 20px; font-size: 12px; }
 
+            /* Footer */
+            .site-footer { padding: 28px 16px 20px; }
+            .footer-top { flex-direction: column; align-items: center; text-align: center; gap: 20px; }
+            .footer-brand { align-items: center; }
+            .footer-nav { justify-content: center; gap: 16px; }
+            .footer-socials { justify-content: center; }
+            .footer-bottom { flex-direction: column; text-align: center; gap: 8px; }
+
             /* Cursor blob: hidden on touch devices */
             .cursor-blob { display: none !important; }
 
@@ -1477,6 +1592,15 @@
             .contact-form textarea { padding: 10px 12px; font-size: 12px; }
             .contact-form textarea { min-height: 80px; }
             .contact-form button { padding: 10px 18px; font-size: 11px; }
+
+            /* Footer */
+            .site-footer { padding: 24px 14px 16px; gap: 16px; }
+            .footer-brand-name { font-size: 1.2rem; }
+            .footer-nav { gap: 12px; }
+            .footer-nav a { font-size: 11px; }
+            .footer-socials a { width: 32px; height: 32px; }
+            .footer-socials a svg { width: 14px; height: 14px; }
+            .footer-copy, .footer-made { font-size: 11px; }
 
             .mobile-menu-overlay a { font-size: 22px; }
             .mobile-menu-overlay { gap: 24px; }
@@ -1742,6 +1866,38 @@
                 </form>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="site-footer">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <span class="footer-brand-name">{{ strtoupper(optional($user)->nom ?? 'CHEIKH KEINDE') }}</span>
+                    <span class="footer-brand-role">{{ optional($user)->poste ?? 'Développeur Full-Stack' }}</span>
+                </div>
+                <nav class="footer-nav">
+                    <a href="#accueil">Accueil</a>
+                    <a href="#apropos">A propos</a>
+                    <a href="#cursus">Cursus</a>
+                    <a href="#projets">Projets</a>
+                    <a href="#contact">Contact</a>
+                </nav>
+                <div class="footer-socials">
+                    <a href="https://www.linkedin.com/in/pape-cheikh-keinde-b6612a2a0/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
+                        <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                    </a>
+                    <a href="https://github.com/Pkeinde6" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                    </a>
+                    <a href="mailto:pkeinde6@gmail.com" aria-label="Email">
+                        <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span class="footer-copy">&copy; {{ date('Y') }} {{ optional($user)->nom ?? 'Cheikh Keinde' }}. Tous droits réservés.</span>
+                <span class="footer-made">Fait avec <span>&hearts;</span> à Dakar</span>
+            </div>
+        </footer>
     </div>
 
     <script>
@@ -1934,10 +2090,19 @@
         });
 
         // Smooth scroll for ALL anchor links (navbar + hero button + mobile menu)
+        // Map fixed-position sections to their ScrollTrigger trigger elements
+        const anchorToTrigger = {
+            '#projets': '#scrollSection8',
+            '#contact': '#scrollSectionContact',
+        };
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', (e) => {
                 e.preventDefault();
-                const target = document.querySelector(anchor.getAttribute('href'));
+                const href = anchor.getAttribute('href');
+                const triggerSelector = anchorToTrigger[href];
+                const target = triggerSelector
+                    ? document.querySelector(triggerSelector)
+                    : document.querySelector(href);
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth' });
                 }
