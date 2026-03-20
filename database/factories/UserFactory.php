@@ -34,7 +34,7 @@ class UserFactory extends Factory
             'password' => 'password',
             'adresse' => 'Dakar, Sénégal',
             'poste' => 'Full-Stack Developer',
-            'link' => fake()->url(),
+            'link' => 'https://github.com/papechk',
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ];
