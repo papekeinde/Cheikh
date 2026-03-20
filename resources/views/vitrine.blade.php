@@ -1495,8 +1495,7 @@
     </div>
 
     <!-- Projets section -->
-    <div class="projets-section" id="projetsSection" data-anchor="projets" aria-label="Section projets">
-        <span id="projets" class="sr-only" aria-hidden="true"></span>
+    <div class="projets-section" id="projets" data-anchor="projets" aria-label="Section projets">
         <div class="projets-header">
             <h2 class="projets-title" id="projetsTitle">Mes Projets</h2>
             <div class="projets-filters" id="projetsFilters">
@@ -1551,7 +1550,7 @@
     </div>
 
     <!-- Contact section -->
-    <div class="contact-section" id="contactSection">
+    <div class="contact-section" id="contact">
         <div class="contact-inner">
             <div class="contact-left">
                 <h2>Contact</h2>
@@ -1597,7 +1596,7 @@
                     </div>
                 </div>
 
-                <form method="POST" action="{{ route('contact.store') }}" class="contact-form" id="contact">
+                <form method="POST" action="{{ route('contact.store') }}" class="contact-form" id="contactForm">
                     @csrf
                     <div class="contact-form-grid">
                         <input type="text" name="name" placeholder="Votre nom" value="{{ old('name') }}" required>
@@ -1800,8 +1799,8 @@
             });
         });
 
-        // Smooth scroll for navbar anchor links
-        document.querySelectorAll('.nav-links a[href^="#"]').forEach(anchor => {
+        // Smooth scroll for ALL anchor links (navbar + hero button + mobile menu)
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', (e) => {
                 e.preventDefault();
                 const target = document.querySelector(anchor.getAttribute('href'));
@@ -2467,7 +2466,7 @@
             });
 
             // === Phase 8: Projets section slides up over stacks ===
-            const projetsSection = document.getElementById('projetsSection');
+            const projetsSection = document.getElementById('projets');
 
             ScrollTrigger.create({
                 trigger: '#scrollSection8',
@@ -2699,7 +2698,7 @@
             });
 
             // === Phase 10: Contact section slides up over projets ===
-            const contactSection = document.getElementById('contactSection');
+            const contactSection = document.getElementById('contact');
 
             ScrollTrigger.create({
                 trigger: '#scrollSectionContact',
