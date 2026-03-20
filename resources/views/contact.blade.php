@@ -473,20 +473,19 @@
 
                 <div class="contact-item">
                     <h3>Email</h3>
-                    <p><a href="mailto:contact@cheikh.me">contact@cheikh.me</a></p>
+                    <p><a href="mailto:pkeinde6@gmail.com">pkeinde6@gmail.com</a></p>
                 </div>
 
                 <div class="contact-item">
                     <h3>Téléphone</h3>
-                    <p><a href="tel:+221771234567">+221 77 123 45 67</a></p>
+                    <p><a href="tel:+221772756581">+221 77 275 65 81</a></p>
                 </div>
 
                 <div class="contact-item">
                     <h3>Réseaux sociaux</h3>
                     <p>
-                        <a href="https://linkedin.com" target="_blank">LinkedIn</a> ·
-                        <a href="https://github.com" target="_blank">GitHub</a> ·
-                        <a href="https://twitter.com" target="_blank">Twitter</a>
+                        <a href="https://www.linkedin.com/in/pape-cheikh-keinde-b6612a2a0/" target="_blank" rel="noopener noreferrer">LinkedIn</a> ·
+                        <a href="https://github.com/papechk" target="_blank" rel="noopener noreferrer">GitHub</a>
                     </p>
                 </div>
             </div>
