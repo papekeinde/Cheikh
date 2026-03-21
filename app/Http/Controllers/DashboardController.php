@@ -42,13 +42,48 @@ class DashboardController extends Controller
             $totalUnique = Visit::distinct('ip_hash')->count('ip_hash');
             $recentVisits = Visit::latest()->take(30)->get();
 
-            // Last 7 days chart data
+            // === Périodes : jour, semaine, mois, année ===
+            $weekStart = now()->startOfWeek();
+            $monthStart = now()->startOfMonth();
+            $yearStart = now()->startOfYear();
+
+            $weekVisits = Visit::where('created_at', '>=', $weekStart)->count();
+            $weekUnique = Visit::where('created_at', '>=', $weekStart)->distinct('ip_hash')->count('ip_hash');
+            $monthVisits = Visit::where('created_at', '>=', $monthStart)->count();
+            $monthUnique = Visit::where('created_at', '>=', $monthStart)->distinct('ip_hash')->count('ip_hash');
+            $yearVisits = Visit::where('created_at', '>=', $yearStart)->count();
+            $yearUnique = Visit::where('created_at', '>=', $yearStart)->distinct('ip_hash')->count('ip_hash');
+
+            // Chart: last 7 days
             $last7Days = collect(range(6, 0))->map(function ($daysAgo) {
                 $date = now()->subDays($daysAgo);
                 return [
                     'label' => $date->format('d/m'),
                     'total' => Visit::whereDate('created_at', $date->toDateString())->count(),
                     'unique' => Visit::whereDate('created_at', $date->toDateString())->distinct('ip_hash')->count('ip_hash'),
+                ];
+            });
+
+            // Chart: last 4 weeks
+            $last4Weeks = collect(range(3, 0))->map(function ($weeksAgo) {
+                $start = now()->subWeeks($weeksAgo)->startOfWeek();
+                $end = now()->subWeeks($weeksAgo)->endOfWeek();
+                return [
+                    'label' => $start->format('d/m') . '-' . $end->format('d/m'),
+                    'total' => Visit::whereBetween('created_at', [$start, $end])->count(),
+                    'unique' => Visit::whereBetween('created_at', [$start, $end])->distinct('ip_hash')->count('ip_hash'),
+                ];
+            });
+
+            // Chart: last 12 months
+            $last12Months = collect(range(11, 0))->map(function ($monthsAgo) {
+                $date = now()->subMonths($monthsAgo);
+                $start = $date->copy()->startOfMonth();
+                $end = $date->copy()->endOfMonth();
+                return [
+                    'label' => $date->translatedFormat('M'),
+                    'total' => Visit::whereBetween('created_at', [$start, $end])->count(),
+                    'unique' => Visit::whereBetween('created_at', [$start, $end])->distinct('ip_hash')->count('ip_hash'),
                 ];
             });
 
@@ -85,10 +120,18 @@ class DashboardController extends Controller
                 'contactMessages' => $contactMessages,
                 'todayVisits' => $todayVisits,
                 'todayUnique' => $todayUnique,
+                'weekVisits' => $weekVisits,
+                'weekUnique' => $weekUnique,
+                'monthVisits' => $monthVisits,
+                'monthUnique' => $monthUnique,
+                'yearVisits' => $yearVisits,
+                'yearUnique' => $yearUnique,
                 'totalVisits' => $totalVisits,
                 'totalUnique' => $totalUnique,
                 'recentVisits' => $recentVisits,
                 'last7Days' => $last7Days,
+                'last4Weeks' => $last4Weeks,
+                'last12Months' => $last12Months,
                 'hourlyData' => $hourlyData,
                 'topLocations' => $topLocations,
                 'visitors' => $visitors,

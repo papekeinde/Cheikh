@@ -169,6 +169,40 @@
             background: rgba(241,101,41,0.15) !important;
             color: #fb923c !important;
         }
+        /* Period tabs */
+        .period-tab {
+            padding: 0.5rem 1.15rem;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #64748b;
+            background: rgba(241,245,249,0.8);
+            border: 1px solid transparent;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', sans-serif;
+        }
+        .period-tab:hover {
+            color: #0f172a;
+            background: rgba(241,245,249,1);
+        }
+        .period-tab--active {
+            background: #f16529 !important;
+            color: #fff !important;
+            box-shadow: 0 4px 14px -4px rgba(241,101,41,0.5);
+        }
+        html.dark .period-tab {
+            color: #94a3b8;
+            background: rgba(30,41,59,0.8);
+        }
+        html.dark .period-tab:hover {
+            color: #f1f5f9;
+            background: rgba(51,65,85,0.8);
+        }
+        html.dark .period-tab--active {
+            background: #f16529 !important;
+            color: #fff !important;
+        }
     </style>
 @endpush
 
@@ -176,31 +210,54 @@
 
 @section('content')
     <div class="space-y-8">
-        <section class="grid gap-4 md:grid-cols-3 lg:grid-cols-3">
+        <section>
             @if(auth()->user()->isAdmin())
-                <div class="stat-card">
-                    <p class="stat-card__label">Visites aujourd'hui</p>
-                    <p class="stat-card__value">{{ $todayVisits }}</p>
+                {{-- Period tabs --}}
+                <div class="flex flex-wrap gap-2 mb-5" x-data="{ period: 'day' }" id="periodTabs">
+                    <button @click="period='day'; $dispatch('period-change', {period:'day'})" :class="period==='day' ? 'period-tab--active' : ''" class="period-tab">Aujourd'hui</button>
+                    <button @click="period='week'; $dispatch('period-change', {period:'week'})" :class="period==='week' ? 'period-tab--active' : ''" class="period-tab">Semaine</button>
+                    <button @click="period='month'; $dispatch('period-change', {period:'month'})" :class="period==='month' ? 'period-tab--active' : ''" class="period-tab">Mois</button>
+                    <button @click="period='year'; $dispatch('period-change', {period:'year'})" :class="period==='year' ? 'period-tab--active' : ''" class="period-tab">Année</button>
                 </div>
-                <div class="stat-card">
-                    <p class="stat-card__label">Uniques aujourd'hui</p>
-                    <p class="stat-card__value">{{ $todayUnique }}</p>
+
+                <div class="grid gap-4 md:grid-cols-3 lg:grid-cols-4"
+                     x-data="{
+                         period: 'day',
+                         stats: {
+                             day:   { visits: {{ $todayVisits }}, unique: {{ $todayUnique }}, label: 'Aujourd\'hui' },
+                             week:  { visits: {{ $weekVisits }},  unique: {{ $weekUnique }},  label: 'Cette semaine' },
+                             month: { visits: {{ $monthVisits }}, unique: {{ $monthUnique }}, label: 'Ce mois' },
+                             year:  { visits: {{ $yearVisits }},  unique: {{ $yearUnique }},  label: 'Cette année' }
+                         }
+                     }"
+                     @period-change.window="period = $event.detail.period">
+                    <div class="stat-card">
+                        <p class="stat-card__label">Visites <span x-text="stats[period].label" class="lowercase"></span></p>
+                        <p class="stat-card__value" x-text="stats[period].visits"></p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-card__label">Uniques <span x-text="stats[period].label" class="lowercase"></span></p>
+                        <p class="stat-card__value" x-text="stats[period].unique"></p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-card__label">Total toutes visites</p>
+                        <p class="stat-card__value">{{ $totalVisits }}</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-card__label">Visiteurs uniques (total)</p>
+                        <p class="stat-card__value">{{ $totalUnique }}</p>
+                    </div>
                 </div>
-                <div class="stat-card">
-                    <p class="stat-card__label">Total visites</p>
-                    <p class="stat-card__value">{{ $totalVisits }}</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-card__label">Visiteurs uniques</p>
-                    <p class="stat-card__value">{{ $totalUnique }}</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-card__label">Projets en attente</p>
-                    <p class="stat-card__value">{{ $pendingProjects->count() }}</p>
-                </div>
-                <div class="stat-card">
-                    <p class="stat-card__label">Projets approuvés</p>
-                    <p class="stat-card__value">{{ $approvedProjectsCount }}</p>
+
+                <div class="grid gap-4 md:grid-cols-2 mt-4">
+                    <div class="stat-card">
+                        <p class="stat-card__label">Projets en attente</p>
+                        <p class="stat-card__value">{{ $pendingProjects->count() }}</p>
+                    </div>
+                    <div class="stat-card">
+                        <p class="stat-card__label">Projets approuvés</p>
+                        <p class="stat-card__value">{{ $approvedProjectsCount }}</p>
+                    </div>
                 </div>
             @else
                 <div class="stat-card">
@@ -224,8 +281,13 @@
         @if(auth()->user()->isAdmin())
             {{-- ═══ GRAPHIQUES ═══ --}}
             <section class="grid gap-6 lg:grid-cols-2">
-                <div class="stat-card chart-card" style="border-radius:1.75rem;">
-                    <h3 class="text-lg font-semibold text-slate-800 mb-4" style="font-family:'Playfair Display',serif">Visites — 7 derniers jours</h3>
+                <div class="stat-card chart-card" style="border-radius:1.75rem;"
+                     x-data="{ chartPeriod: 'day' }"
+                     @period-change.window="chartPeriod = $event.detail.period; window.updateVisitsChart && window.updateVisitsChart($event.detail.period)">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-slate-800" style="font-family:'Playfair Display',serif"
+                            x-text="chartPeriod==='day' ? 'Visites — 7 derniers jours' : chartPeriod==='week' ? 'Visites — 4 dernières semaines' : chartPeriod==='month' ? 'Visites — 12 derniers mois' : 'Visites — 12 derniers mois'"></h3>
+                    </div>
                     <div style="height:240px"><canvas id="visitsChart"></canvas></div>
                 </div>
                 <div class="stat-card chart-card" style="border-radius:1.75rem;">
@@ -672,16 +734,22 @@
     Chart.defaults.color = tickColor;
     Chart.defaults.borderColor = gridColor;
 
-    // Visits line chart
-    const visitsData = @json($last7Days);
-    new Chart(document.getElementById('visitsChart'), {
+    // Visits line chart — switchable by period
+    const chartDataSets = {
+        day: @json($last7Days),
+        week: @json($last4Weeks),
+        month: @json($last12Months),
+        year: @json($last12Months)
+    };
+
+    let visitsChartInstance = new Chart(document.getElementById('visitsChart'), {
         type: 'line',
         data: {
-            labels: visitsData.map(d => d.label),
+            labels: chartDataSets.day.map(d => d.label),
             datasets: [
                 {
                     label: 'Total',
-                    data: visitsData.map(d => d.total),
+                    data: chartDataSets.day.map(d => d.total),
                     borderColor: brandColor,
                     backgroundColor: brandLight,
                     fill: true,
@@ -692,7 +760,7 @@
                 },
                 {
                     label: 'Uniques',
-                    data: visitsData.map(d => d.unique),
+                    data: chartDataSets.day.map(d => d.unique),
                     borderColor: blueColor,
                     backgroundColor: blueLight,
                     fill: true,
@@ -714,6 +782,14 @@
             }
         }
     });
+
+    window.updateVisitsChart = function(period) {
+        const data = chartDataSets[period] || chartDataSets.day;
+        visitsChartInstance.data.labels = data.map(d => d.label);
+        visitsChartInstance.data.datasets[0].data = data.map(d => d.total);
+        visitsChartInstance.data.datasets[1].data = data.map(d => d.unique);
+        visitsChartInstance.update();
+    };
 
     // Hourly bar chart
     const hourlyData = @json($hourlyData);
