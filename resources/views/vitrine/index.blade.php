@@ -1912,7 +1912,6 @@
             </div>
             <div class="footer-bottom">
                 <span class="footer-copy">&copy; {{ date('Y') }} {{ optional($user)->nom ?? 'Cheikh Keinde' }}. Tous droits réservés.</span>
-                <span class="footer-made">Fait avec <span>&hearts;</span> à Dakar</span>
             </div>
         </footer>
     </div>
