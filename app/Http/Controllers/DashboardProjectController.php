@@ -11,7 +11,7 @@ class DashboardProjectController extends Controller
 {
     public function create(): View
     {
-        return view('dashboard.projects.create');
+        return view('admin.projects.create');
     }
 
     public function store(Request $request): RedirectResponse

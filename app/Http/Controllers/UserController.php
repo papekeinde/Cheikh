@@ -33,7 +33,7 @@ class UserController extends Controller
             [$user, $projets] = $this->fetchFromSupabaseRest();
         }
 
-        return view('vitrine', compact('user', 'projets'));
+        return view('vitrine.index', compact('user', 'projets'));
     }
 
     /**

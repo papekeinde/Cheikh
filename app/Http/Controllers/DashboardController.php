@@ -78,8 +78,7 @@ class DashboardController extends Controller
                 ->limit(20)
                 ->get();
 
-            return view('dashboard', [
-                'submittedProjects' => Projet::with('user')->latest()->get(),
+            return view('admin.dashboard', [
                 'pendingProjects' => Projet::with('user')->pending()->latest()->get(),
                 'approvedProjectsCount' => Projet::approved()->count(),
                 'usersCount' => \App\Models\User::count(),
@@ -96,7 +95,7 @@ class DashboardController extends Controller
             ]);
         }
 
-        return view('dashboard', [
+        return view('admin.dashboard', [
             'myProjects' => $user->projets()->latest()->get(),
             'activeProjectsCount' => $user->projets()->whereIn('status', ['pending', 'approved'])->count(),
             'approvedProjectsCount' => $user->projets()->approved()->count(),

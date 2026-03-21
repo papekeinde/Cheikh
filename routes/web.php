@@ -32,7 +32,7 @@ Route::get('/__health', function () {
 Route::get('/__debug-render', function () {
     try {
         view('auth.login')->render();
-        view('contact')->render();
+        view('vitrine.contact')->render();
 
         return response()->json([
             'status' => 'ok',
@@ -85,7 +85,7 @@ Route::get('/__debug-db', function () {
 });
 
 Route::get('/contact', function () {
-    return view('contact');
+    return view('vitrine.contact');
 })->name('contact');
 Route::post('/contact', [ContactController::class, 'store'])->name('contact.store');
 

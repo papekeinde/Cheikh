@@ -154,6 +154,21 @@
             background: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, #1e293b 100%);
             border-color: #334155;
         }
+        html.dark #worldMapSvg {
+            background: linear-gradient(180deg, #1a2535 0%, #1e2d3d 50%, #172030 100%);
+        }
+        html.dark #worldMapSvg .map-land {
+            fill: #2d3a48;
+            stroke: #3d4d5e;
+        }
+        html.dark #mapTooltip {
+            background: rgba(28,28,30,0.95) !important;
+            border: 1px solid rgba(255,255,255,0.08) !important;
+        }
+        html.dark .map-legend-chip {
+            background: rgba(241,101,41,0.15) !important;
+            color: #fb923c !important;
+        }
     </style>
 @endpush
 
@@ -216,6 +231,186 @@
                 <div class="stat-card chart-card" style="border-radius:1.75rem;">
                     <h3 class="text-lg font-semibold text-slate-800 mb-4" style="font-family:'Playfair Display',serif">Distribution horaire</h3>
                     <div style="height:240px"><canvas id="hourlyChart"></canvas></div>
+                </div>
+            </section>
+
+            {{-- ═══ CARTE DU MONDE — VISITEURS ═══ --}}
+            <section class="moderation-shell p-6 md:p-8">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-display text-slate-950" style="font-family:'Playfair Display',serif">Visiteurs dans le monde</h2>
+                    <p class="mt-2 text-sm text-slate-500">Carte des pays d'où proviennent vos visiteurs.</p>
+                </div>
+
+                <div class="relative" id="worldMapContainer">
+                    {{-- Tooltip Apple Maps style --}}
+                    <div id="mapTooltip" class="absolute pointer-events-none z-50 hidden" style="transform:translate(-50%,-130%)">
+                        <div style="background:rgba(255,255,255,0.95);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:14px;padding:10px 14px;box-shadow:0 2px 20px rgba(0,0,0,0.15),0 0 0 0.5px rgba(0,0,0,0.08);font-size:13px;line-height:1.4;color:#1d1d1f;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',sans-serif;min-width:120px;text-align:center">
+                            <div id="mapTooltipContent"></div>
+                        </div>
+                        <div style="width:0;height:0;border-left:8px solid transparent;border-right:8px solid transparent;border-top:8px solid rgba(255,255,255,0.95);margin:0 auto"></div>
+                    </div>
+
+                    <svg id="worldMapSvg" viewBox="0 0 1000 500" class="w-full h-auto" style="max-height:440px;border-radius:1.5rem;background:linear-gradient(180deg,#c3ddf0 0%,#a8cce4 30%,#92bfdb 60%,#b0d0e8 100%);overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.08),inset 0 1px 0 rgba(255,255,255,0.3)">
+                        <defs>
+                            <filter id="pinShadow" x="-50%" y="-50%" width="200%" height="200%">
+                                <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="rgba(0,0,0,0.25)" />
+                            </filter>
+                            <filter id="landShadow" x="-2%" y="-2%" width="104%" height="104%">
+                                <feDropShadow dx="0" dy="1" stdDeviation="1.5" flood-color="rgba(0,0,0,0.06)" />
+                            </filter>
+                            <radialGradient id="oceanShine" cx="40%" cy="30%" r="60%">
+                                <stop offset="0%" stop-color="rgba(255,255,255,0.08)" />
+                                <stop offset="100%" stop-color="rgba(255,255,255,0)" />
+                            </radialGradient>
+                        </defs>
+                        <rect width="1000" height="500" fill="url(#oceanShine)" />
+
+                        {{-- Cercles par pays --}}
+                        @php
+                            // Mapping simplifié pays → coordonnées approximatives sur la carte SVG 1000x500
+                            $countryCoords = [
+                                'France' => [480, 175], 'FR' => [480, 175],
+                                'Senegal' => [410, 260], 'SN' => [410, 260],
+                                'United States' => [220, 185], 'US' => [220, 185], 'USA' => [220, 185], 'États-Unis' => [220, 185],
+                                'Canada' => [230, 140], 'CA' => [230, 140],
+                                'United Kingdom' => [460, 155], 'GB' => [460, 155], 'UK' => [460, 155], 'Royaume-Uni' => [460, 155],
+                                'Germany' => [505, 165], 'DE' => [505, 165], 'Allemagne' => [505, 165],
+                                'Spain' => [465, 195], 'ES' => [465, 195], 'Espagne' => [465, 195],
+                                'Italy' => [510, 190], 'IT' => [510, 190], 'Italie' => [510, 190],
+                                'Belgium' => [485, 165], 'BE' => [485, 165], 'Belgique' => [485, 165],
+                                'Switzerland' => [495, 178], 'CH' => [495, 178], 'Suisse' => [495, 178],
+                                'Netherlands' => [487, 158], 'NL' => [487, 158], 'Pays-Bas' => [487, 158],
+                                'Portugal' => [450, 195], 'PT' => [450, 195],
+                                'Morocco' => [450, 225], 'MA' => [450, 225], 'Maroc' => [450, 225],
+                                'Tunisia' => [505, 218], 'TN' => [505, 218], 'Tunisie' => [505, 218],
+                                'Algeria' => [480, 225], 'DZ' => [480, 225], 'Algérie' => [480, 225],
+                                'Mali' => [455, 265], 'ML' => [455, 265],
+                                'Guinea' => [420, 270], 'GN' => [420, 270], 'Guinée' => [420, 270],
+                                'Ivory Coast' => [440, 280], 'CI' => [440, 280], "Côte d'Ivoire" => [440, 280],
+                                'Cameroon' => [505, 285], 'CM' => [505, 285], 'Cameroun' => [505, 285],
+                                'Nigeria' => [490, 280], 'NG' => [490, 280],
+                                'Ghana' => [460, 280], 'GH' => [460, 280],
+                                'Congo' => [520, 310], 'CD' => [530, 310], 'CG' => [520, 305],
+                                'South Africa' => [535, 385], 'ZA' => [535, 385], 'Afrique du Sud' => [535, 385],
+                                'Egypt' => [545, 225], 'EG' => [545, 225], 'Égypte' => [545, 225],
+                                'Kenya' => [565, 305], 'KE' => [565, 305],
+                                'Ethiopia' => [570, 280], 'ET' => [570, 280], 'Éthiopie' => [570, 280],
+                                'India' => [680, 245], 'IN' => [680, 245], 'Inde' => [680, 245],
+                                'China' => [750, 210], 'CN' => [750, 210], 'Chine' => [750, 210],
+                                'Japan' => [830, 195], 'JP' => [830, 195], 'Japon' => [830, 195],
+                                'South Korea' => [810, 200], 'KR' => [810, 200], 'Corée du Sud' => [810, 200],
+                                'Russia' => [650, 130], 'RU' => [650, 130], 'Russie' => [650, 130],
+                                'Turkey' => [555, 195], 'TR' => [555, 195], 'Turquie' => [555, 195],
+                                'Brazil' => [310, 340], 'BR' => [310, 340], 'Brésil' => [310, 340],
+                                'Mexico' => [180, 245], 'MX' => [180, 245], 'Mexique' => [180, 245],
+                                'Argentina' => [285, 395], 'AR' => [285, 395], 'Argentine' => [285, 395],
+                                'Colombia' => [260, 290], 'CO' => [260, 290], 'Colombie' => [260, 290],
+                                'Australia' => [825, 385], 'AU' => [825, 385], 'Australie' => [825, 385],
+                                'Indonesia' => [785, 310], 'ID' => [785, 310], 'Indonésie' => [785, 310],
+                                'Saudi Arabia' => [580, 240], 'SA' => [580, 240], 'Arabie Saoudite' => [580, 240],
+                                'UAE' => [610, 245], 'AE' => [610, 245], 'Émirats arabes unis' => [610, 245],
+                                'Poland' => [520, 160], 'PL' => [520, 160], 'Pologne' => [520, 160],
+                                'Sweden' => [510, 130], 'SE' => [510, 130], 'Suède' => [510, 130],
+                                'Norway' => [500, 120], 'NO' => [500, 120], 'Norvège' => [500, 120],
+                                'Ireland' => [445, 155], 'IE' => [445, 155], 'Irlande' => [445, 155],
+                                'Austria' => [510, 175], 'AT' => [510, 175], 'Autriche' => [510, 175],
+                                'Romania' => [535, 178], 'RO' => [535, 178], 'Roumanie' => [535, 178],
+                                'Ukraine' => [550, 165], 'UA' => [550, 165],
+                                'Pakistan' => [650, 235], 'PK' => [650, 235],
+                                'Bangladesh' => [700, 248], 'BD' => [700, 248],
+                                'Vietnam' => [760, 260], 'VN' => [760, 260],
+                                'Thailand' => [745, 260], 'TH' => [745, 260], 'Thaïlande' => [745, 260],
+                                'Philippines' => [810, 265], 'PH' => [810, 265],
+                                'Malaysia' => [770, 290], 'MY' => [770, 290], 'Malaisie' => [770, 290],
+                                'Singapore' => [775, 300], 'SG' => [775, 300], 'Singapour' => [775, 300],
+                                'Mauritania' => [425, 245], 'MR' => [425, 245], 'Mauritanie' => [425, 245],
+                                'Gambia' => [410, 258], 'GM' => [410, 258], 'Gambie' => [410, 258],
+                                'Burkina Faso' => [454, 272], 'BF' => [454, 272],
+                                'Niger' => [475, 260], 'NE' => [475, 260],
+                                'Togo' => [465, 280], 'TG' => [465, 280],
+                                'Benin' => [475, 280], 'BJ' => [475, 280], 'Bénin' => [475, 280],
+                                'Gabon' => [510, 305], 'GA' => [510, 305],
+                                'Tanzania' => [560, 320], 'TZ' => [560, 320], 'Tanzanie' => [560, 320],
+                            ];
+
+                            $maxCount = $topLocations->max('visit_count') ?: 1;
+                        @endphp
+
+                        {{-- Continents — Apple Maps style (beige/sand fill, soft edges) --}}
+                        {{-- Greenland --}}
+                        <path class="map-land" d="M310,55 Q330,40 360,42 Q385,44 395,58 Q400,72 390,85 Q375,95 355,92 Q330,88 315,78 Q305,68 310,55 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- North America --}}
+                        <path class="map-land" d="M85,110 Q100,85 140,72 Q175,62 210,68 Q245,72 270,82 Q290,75 305,85 Q310,100 300,115 L290,135 Q285,145 278,155 Q270,168 258,180 Q245,195 230,210 Q222,220 218,232 Q215,245 205,255 Q195,262 183,268 Q170,270 160,260 Q148,248 140,235 Q130,218 118,200 Q105,180 95,160 Q82,138 80,120 Q82,112 85,110 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- Central America --}}
+                        <path class="map-land" d="M165,258 Q175,252 185,260 Q192,268 200,275 Q195,282 188,288 Q178,290 172,285 Q165,278 162,270 Q163,262 165,258 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- South America --}}
+                        <path class="map-land" d="M230,282 Q250,272 275,275 Q300,278 318,290 Q332,302 340,318 Q345,335 342,355 Q338,375 328,392 Q315,410 300,422 Q285,432 272,428 Q258,420 250,405 Q242,388 238,368 Q235,348 233,328 Q230,308 228,295 Q229,286 230,282 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- Europe --}}
+                        <path class="map-land" d="M440,108 Q455,98 472,100 Q488,102 502,108 Q518,105 530,110 Q545,115 555,125 Q562,135 558,148 Q555,160 548,172 Q540,185 530,195 Q520,202 508,205 Q495,208 482,205 Q468,200 458,192 Q448,182 442,170 Q436,156 434,142 Q433,128 436,118 Q438,112 440,108 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- British Isles --}}
+                        <path class="map-land" d="M445,130 Q450,122 458,120 Q465,122 468,128 Q470,136 466,142 Q460,146 454,145 Q448,142 446,136 Q445,132 445,130 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- Africa --}}
+                        <path class="map-land" d="M430,215 Q450,208 472,212 Q495,210 515,215 Q535,218 552,225 Q568,232 578,245 Q585,260 582,278 Q578,298 570,318 Q560,340 548,358 Q535,375 520,388 Q505,398 490,400 Q475,398 462,390 Q450,378 442,362 Q435,345 430,325 Q425,302 422,280 Q420,258 422,240 Q425,225 430,215 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- Middle East --}}
+                        <path class="map-land" d="M558,200 Q572,195 585,198 Q598,200 610,208 Q618,215 622,225 Q620,238 612,248 Q600,255 588,252 Q575,248 565,238 Q558,228 555,218 Q555,208 558,200 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- Russia / North Asia --}}
+                        <path class="map-land" d="M555,68 Q590,58 630,60 Q670,58 710,62 Q748,65 780,72 Q810,78 835,88 Q855,98 860,112 Q858,128 848,142 Q835,155 818,162 Q800,168 780,170 Q752,168 730,162 Q706,158 685,152 Q665,148 648,142 Q630,138 615,132 Q598,128 585,120 Q572,112 562,102 Q555,92 553,82 Q554,74 555,68 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- South/East Asia --}}
+                        <path class="map-land" d="M625,165 Q645,158 668,162 Q690,168 710,178 Q730,185 748,195 Q765,205 775,218 Q782,232 778,248 Q772,262 760,272 Q745,278 728,275 Q710,270 695,260 Q678,252 665,240 Q652,228 642,215 Q635,200 630,188 Q626,175 625,165 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- India --}}
+                        <path class="map-land" d="M645,232 Q658,225 672,228 Q685,232 695,242 Q700,255 698,268 Q692,280 682,288 Q670,292 658,288 Q648,280 642,268 Q638,254 640,242 Q642,235 645,232 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- Japan --}}
+                        <path class="map-land" d="M822,168 Q830,162 838,165 Q842,172 840,182 Q836,192 830,198 Q824,200 820,195 Q816,188 818,178 Q820,172 822,168 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- Southeast Asia Islands --}}
+                        <path class="map-land" d="M758,280 Q772,275 788,278 Q802,282 812,292 Q818,302 815,315 Q808,325 798,328 Q785,330 772,325 Q762,318 756,308 Q752,296 754,285 Q755,280 758,280 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- Australia --}}
+                        <path class="map-land" d="M780,348 Q805,338 832,342 Q858,348 878,362 Q890,375 888,392 Q882,408 868,418 Q850,425 830,422 Q808,418 790,408 Q775,396 770,382 Q768,368 772,355 Q775,350 780,348 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        {{-- New Zealand --}}
+                        <path class="map-land" d="M905,400 Q912,395 918,398 Q920,405 916,412 Q910,416 904,414 Q900,408 902,402 Q904,400 905,400 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+
+                        {{-- Data circles + labels --}}
+                        @foreach($topLocations as $loc)
+                            @php
+                                $coords = $countryCoords[$loc->country] ?? null;
+                                if (!$coords) continue;
+                                $ratio = $loc->visit_count / $maxCount;
+                                $r = 8 + ($ratio * 22);
+                                $opacity = 0.35 + ($ratio * 0.55);
+                            @endphp
+                            <g class="map-point" data-country="{{ $loc->country }}" data-city="{{ $loc->city }}" data-count="{{ $loc->visit_count }}" style="cursor:pointer">
+                                {{-- Soft pulse --}}
+                                <circle cx="{{ $coords[0] }}" cy="{{ $coords[1] }}" r="{{ $r }}" fill="#f16529" fill-opacity="0.12">
+                                    <animate attributeName="r" values="{{ $r }};{{ $r + 14 }};{{ $r }}" dur="3.5s" repeatCount="indefinite" />
+                                    <animate attributeName="fill-opacity" values="0.12;0;0.12" dur="3.5s" repeatCount="indefinite" />
+                                </circle>
+                                {{-- Pin shadow --}}
+                                <circle cx="{{ $coords[0] }}" cy="{{ $coords[1] + 1 }}" r="{{ max($r * 0.72, 6) }}" fill="rgba(0,0,0,0.18)" filter="url(#pinShadow)" />
+                                {{-- White outer ring --}}
+                                <circle cx="{{ $coords[0] }}" cy="{{ $coords[1] }}" r="{{ max($r * 0.72, 6) }}" fill="#ffffff" />
+                                {{-- Inner accent fill --}}
+                                <circle cx="{{ $coords[0] }}" cy="{{ $coords[1] }}" r="{{ max($r * 0.52, 4) }}" fill="#f16529" />
+                                {{-- Count label (only for larger points) --}}
+                                @if($r > 16)
+                                    <text x="{{ $coords[0] }}" y="{{ $coords[1] - $r - 6 }}" text-anchor="middle" fill="#1d1d1f" font-size="10" font-weight="700" font-family="-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',sans-serif">{{ $loc->visit_count }}</text>
+                                @endif
+                            </g>
+                        @endforeach
+                    </svg>
+
+                    {{-- Légende Apple Maps style --}}
+                    @if($topLocations->count())
+                        <div class="mt-5 flex flex-wrap gap-2.5 justify-center">
+                            @foreach($topLocations->take(6) as $loc)
+                                <span class="map-legend-chip inline-flex items-center gap-2 px-3.5 py-2 rounded-2xl text-xs font-semibold" style="background:rgba(255,255,255,0.85);color:#1d1d1f;backdrop-filter:blur(12px);box-shadow:0 1px 4px rgba(0,0,0,0.06),0 0 0 0.5px rgba(0,0,0,0.04);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',sans-serif">
+                                    <span style="width:8px;height:8px;border-radius:50%;background:#f16529;box-shadow:0 0 0 2px #fff,0 0 0 3px rgba(241,101,41,0.3)"></span>
+                                    {{ $loc->country }}{{ $loc->city ? ' · '.$loc->city : '' }}
+                                    <span style="color:#86868b;font-weight:500">{{ $loc->visit_count }}</span>
+                                </span>
+                            @endforeach
+                        </div>
+                    @else
+                        <div class="mt-5 text-center text-sm" style="color:#86868b;font-family:-apple-system,BlinkMacSystemFont,'SF Pro Text','Inter',sans-serif">Les données géographiques apparaîtront avec les prochaines visites.</div>
+                    @endif
                 </div>
             </section>
 
@@ -544,6 +739,30 @@
             }
         }
     });
+
+    // World map tooltip — Apple Maps style
+    const mapContainer = document.getElementById('worldMapContainer');
+    const tooltip = document.getElementById('mapTooltip');
+    const tooltipContent = document.getElementById('mapTooltipContent');
+    if (mapContainer && tooltip && tooltipContent) {
+        document.querySelectorAll('.map-point').forEach(g => {
+            g.addEventListener('mouseenter', e => {
+                const country = g.dataset.country;
+                const city = g.dataset.city;
+                const count = g.dataset.count;
+                tooltipContent.innerHTML = '<div style="font-weight:600;font-size:13px">' + (city ? city + ', ' : '') + country + '</div><div style="color:#86868b;font-size:11px;margin-top:2px">' + count + ' visite' + (count > 1 ? 's' : '') + '</div>';
+                tooltip.classList.remove('hidden');
+            });
+            g.addEventListener('mousemove', e => {
+                const rect = mapContainer.getBoundingClientRect();
+                tooltip.style.left = (e.clientX - rect.left) + 'px';
+                tooltip.style.top = (e.clientY - rect.top) + 'px';
+            });
+            g.addEventListener('mouseleave', () => {
+                tooltip.classList.add('hidden');
+            });
+        });
+    }
 </script>
 @endpush
 @endif
