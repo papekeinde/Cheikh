@@ -1776,7 +1776,7 @@
 
     <!-- Stacks section -->
     <div class="stacks-section" id="stacksSection">
-        <h2 class="stacks-title">Stack</h2>
+        <h2 class="stacks-title">Stacks</h2>
         <div class="marquee-wrapper" id="marqueeRow1">
             <div class="marquee-track">
                 <div class="stack-item"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/vuejs/vuejs-original.svg" alt="Vue.js"><span>Vue.js</span></div>
