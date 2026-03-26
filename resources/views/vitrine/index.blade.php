@@ -1722,7 +1722,7 @@
     <section class="scroll-section" id="scrollSection6"></section>
     <section class="scroll-section" id="scrollSection7"></section>
     <section class="scroll-section" id="scrollSection8"></section>
-    <section class="scroll-section" id="scrollSection9" style="height:300vh"></section>
+    <section class="scroll-section" id="scrollSection9"></section>
     <section class="scroll-section" id="scrollSectionContact"></section>
 
     <!-- White wipe overlay -->
@@ -2991,17 +2991,18 @@
 
             function showProjet(index) {
                 if (index === currentProjetIndex || !projets[index]) return;
+                const direction = index > currentProjetIndex ? 1 : -1;
                 currentProjetIndex = index;
 
                 progressFill.style.width = ((index + 1) / projets.length * 100) + '%';
 
-                gsap.to('.projet-info', { opacity: 0, x: -30, duration: 0.2, onComplete: () => {
+                gsap.to('.projet-info', { opacity: 0, x: -40 * direction, duration: 0.3, ease: 'power2.in', onComplete: () => {
                     setProjet(index);
-                    gsap.fromTo('.projet-info', { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.35 });
+                    gsap.fromTo('.projet-info', { opacity: 0, x: 40 * direction }, { opacity: 1, x: 0, duration: 0.45, ease: 'power2.out' });
                 }});
 
-                gsap.to('#projetImage', { opacity: 0, scale: 0.95, duration: 0.2, onComplete: () => {
-                    gsap.fromTo('#projetImage', { opacity: 0, scale: 0.95 }, { opacity: 1, scale: 1, duration: 0.35 });
+                gsap.to('#projetImage', { opacity: 0, scale: 0.92, duration: 0.3, ease: 'power2.in', onComplete: () => {
+                    gsap.fromTo('#projetImage', { opacity: 0, scale: 0.92 }, { opacity: 1, scale: 1, duration: 0.45, ease: 'power2.out' });
                 }});
             }
 
@@ -3019,11 +3020,15 @@
                 if (currentProjetIndex < projets.length - 1) showProjet(currentProjetIndex + 1);
             });
 
+            // Dynamically set scroll height based on project count for smooth pacing
+            const scrollSection9 = document.getElementById('scrollSection9');
+            scrollSection9.style.height = Math.max(300, projets.length * 60) + 'vh';
+
             ScrollTrigger.create({
                 trigger: '#scrollSection9',
                 start: 'top top',
                 end: 'bottom bottom',
-                scrub: true,
+                scrub: 1.2,
                 onUpdate: (self) => {
                     const progress = self.progress;
                     const count = projets.length;
