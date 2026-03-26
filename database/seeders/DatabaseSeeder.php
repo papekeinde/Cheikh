@@ -14,8 +14,8 @@ class DatabaseSeeder extends Seeder
     {
         $user = \App\Models\User::create([
             'nom' => 'Cheikh Keinde',
-            'slogan' => 'Développeur Full-Stack',
-            'description' => 'Développeur Full-Stack passionné, spécialisé en Laravel, Vue.js, C# .NET et solutions web modernes.',
+            'slogan' => 'Full-Stack Developer',
+            'description' => 'Développeur fullstack basé à Dakar. Laravel, Vue.js, C#/.NET, Python, Java.',
             'photo' => 'default-avatar.jpg',
             'tel1' => '772756581',
             'tel2' => '+1(438) 465-8983',
@@ -320,7 +320,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'Portfolio Dynamique',
-                'description' => 'Site portfolio avec animations GSAP avancées, scroll-driven transitions en 9 phases, effet WebGL sur images et gestion de contenu Laravel.',
+                'description' => 'Mon portfolio perso. Animations GSAP au scroll, transitions en plusieurs phases, rendu WebGL sur les images de projets, back-end Laravel.',
                 'image' => 'images/projets/portfolio-dynamique.png',
                 'lien' => 'https://cheikh-p6j9.onrender.com',
                 'github' => 'https://github.com/papechk/foliolara',

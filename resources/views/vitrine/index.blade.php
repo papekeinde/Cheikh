@@ -1721,9 +1721,9 @@
             <div class="hero-cta" id="hero-buttons">
                 <a href="#projets" class="btn-outline">mes projets</a>
                 @auth
-                    <a href="{{ route('dashboard.projects.create') }}" class="btn-primary">job with me</a>
+                    <a href="{{ route('dashboard.projects.create') }}" class="btn-primary">work with me</a>
                 @else
-                    <a href="{{ route('register') }}" class="btn-primary">job with me</a>
+                    <a href="{{ route('register') }}" class="btn-primary">work with me</a>
                 @endauth
             </div>
 
@@ -1861,7 +1861,7 @@
         <div class="contact-inner">
             <div class="contact-left">
                 <h2>Contact</h2>
-                <p>Vous avez un projet en tête ou une opportunité à proposer ? N'hésitez pas à me contacter. Je suis toujours ouvert aux nouvelles collaborations.</p>
+                <p>Un projet, une idée, un poste à pourvoir ? Écrivez-moi, je réponds vite.</p>
                 <div class="contact-links">
                     <a href="https://www.linkedin.com/in/pape-cheikh-keinde-b6612a2a0/" target="_blank" rel="noopener noreferrer" class="contact-item">
                         <svg viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
@@ -1924,7 +1924,7 @@
                         <input type="email" name="email" placeholder="Votre email" value="{{ old('email') }}" required>
                     </div>
                     <input type="text" name="subject" placeholder="Sujet" value="{{ old('subject') }}" required>
-                    <textarea name="message" placeholder="Parlez-moi de votre projet..." required>{{ old('message') }}</textarea>
+                    <textarea name="message" placeholder="Votre message..." required>{{ old('message') }}</textarea>
                     <button type="submit">Envoyer</button>
                 </form>
             </div>
@@ -1971,7 +1971,7 @@
 
     <!-- About content (right side) -->
     <div class="about-content" id="aboutContent">
-        <p>Développeur fullstack junior basé à Dakar, Sénégal. Je travaille avec Vue.js, Laravel, Python, C#/.NET, Java et JavaScript pour concevoir des applications web modernes. Des quiz interactifs aux systèmes de gestion scolaire en passant par des plateformes portfolio, j'aime transformer les idées en code propre et fonctionnel.</p>
+        <p>Basé à Dakar, je code en fullstack depuis bientôt 3 ans. Vue.js et Laravel pour le web, C#/.NET et Java côté back, Python aussi. J'ai construit des quiz interactifs, un système de gestion scolaire, ce portfolio entre autres — et ce qui me plaît surtout, c'est le moment où une idée commence à tourner pour de vrai.</p>
     </div>
 
     <!-- Cursus text (fixed, animated via JS like about) -->
@@ -1998,7 +1998,7 @@
             <div class="timeline-year">Déc. 2024 – Présent</div>
             <div class="timeline-title">Développeur Web</div>
             <div class="timeline-subtitle">STAR Group · Temps partiel</div>
-            <div class="timeline-desc">Gestion des profils sur les réseaux sociaux et communication avec les clients. HTML5, XAMPP et développement web. Administration Windows Server (AD DS, DNS, DHCP, WSUS, WDS, CA) et Linux. Basé à Parcelles Assainies, Dakar, Sénégal.</div>
+            <div class="timeline-desc">Développement web (HTML5, XAMPP), gestion des réseaux sociaux et relation client. Admin système sur Windows Server (AD DS, DNS, DHCP, WSUS, WDS, CA) et Linux.</div>
         </div>
     </div>
 
