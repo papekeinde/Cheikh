@@ -182,6 +182,7 @@
         .scroll-section {
             height: 100vh;
             position: relative;
+            overflow: hidden;
         }
 
         .hero-photo {
@@ -1400,10 +1401,10 @@
             .theme-toggle svg { width: 16px; height: 16px; }
 
             /* Hero */
-            .hero { padding: 0 20px 20px 20px; }
+            .hero { padding: 0 20px 20px 20px; overflow: hidden; }
             .hero-photo { width: 100%; height: 55%; opacity: 0.25; }
-            .hero-title { font-size: clamp(2.8rem, 14vw, 5rem) !important; }
-            .hero-subtitle { font-size: clamp(2.8rem, 14vw, 5rem) !important; }
+            .hero-title { font-size: clamp(2.8rem, 14vw, 5rem) !important; white-space: normal !important; word-break: break-word; }
+            .hero-subtitle { font-size: clamp(2.8rem, 14vw, 5rem) !important; white-space: normal !important; word-break: break-word; }
             .hero-bottom {
                 flex-direction: column-reverse;
                 align-items: flex-start;
@@ -1414,19 +1415,25 @@
             .btn-outline, .btn-primary { padding: 11px 22px; font-size: 11px; }
 
             /* About */
+            .about-text { max-width: 100vw; overflow: hidden; }
             .about-text .about-char { font-size: clamp(2rem, 9vw, 3.5rem) !important; }
             .about-content {
                 right: 16px;
                 left: 16px;
                 width: auto;
                 max-width: 100%;
-                top: auto;
-                bottom: 8%;
-                transform: none;
+                top: 50%;
+                bottom: auto;
+                transform: translateY(-50%);
             }
-            .about-content p { font-size: clamp(0.9rem, 3.2vw, 1.15rem); line-height: 1.65; }
+            .about-content p {
+                font-size: clamp(0.9rem, 3.2vw, 1.15rem);
+                line-height: 1.7;
+                text-align: center;
+            }
 
             /* Cursus */
+            .cursus-text { max-width: 100vw; overflow: hidden; }
             .cursus-text .cursus-char { font-size: clamp(2rem, 9vw, 3.5rem) !important; }
             .cursus-content {
                 left: 16px;
@@ -1437,23 +1444,34 @@
                 transform: translateY(-50%);
                 max-height: 70vh;
             }
-            .cursus-content h3 { font-size: 12px; margin-bottom: 14px; }
-            .timeline-item { margin-bottom: 20px; padding-left: 18px; }
+            .cursus-content h3 {
+                font-size: 11px;
+                margin-bottom: 16px;
+                letter-spacing: 0.15em;
+                padding-bottom: 8px;
+                border-bottom: 1px solid rgba(255,255,255,0.12);
+            }
+            .timeline-item { margin-bottom: 22px; padding-left: 18px; }
             .timeline-title { font-size: 14px; }
             .timeline-subtitle { font-size: 13px; }
-            .timeline-desc { font-size: 12px; }
+            .timeline-desc { font-size: 12px; line-height: 1.7; }
 
             /* Stacks */
+            .stacks-section {
+                justify-content: center;
+                padding: 0;
+            }
             .stacks-title {
                 font-size: clamp(1.8rem, 7vw, 3.5rem);
                 padding: 0 20px;
-                margin-bottom: 24px;
+                margin-bottom: 32px;
+                text-align: center;
             }
-            .stack-item { padding: 12px 18px; gap: 10px; }
-            .stack-item span { font-size: 12px; }
-            .stack-item svg, .stack-item img { width: 22px; height: 22px; }
-            .marquee-track { gap: 16px; }
-            .marquee-track-reverse { gap: 16px; margin-top: 14px; }
+            .stack-item { padding: 10px 16px; gap: 8px; }
+            .stack-item span { font-size: 11px; }
+            .stack-item svg, .stack-item img { width: 20px; height: 20px; }
+            .marquee-track { gap: 12px; }
+            .marquee-track-reverse { gap: 12px; margin-top: 12px; }
 
             /* Projets */
             .projets-section { padding-top: 56px; }
@@ -1538,6 +1556,12 @@
             /* Cursor blob: hidden on touch devices */
             .cursor-blob { display: none !important; }
 
+            /* Reduce scroll length on mobile: transition & exit sections shorter */
+            .scroll-section { height: 60vh; }
+            #scrollSection1, #scrollSection2, #scrollSection3 { height: 50vh; }
+            #scrollSectionAboutExit, #scrollSectionCursusExit { height: 40vh; }
+            #scrollSection6, #scrollSection7, #scrollSection8 { height: 40vh; }
+
             /* Scroll hint */
             .scroll-hint { bottom: 20px; }
             .scroll-hint span { font-size: 11px; padding: 6px 14px; }
@@ -1556,16 +1580,18 @@
             .theme-toggle { width: 32px; height: 32px; }
             .theme-toggle svg { width: 14px; height: 14px; }
 
-            .hero { padding: 0 14px 16px 14px; }
-            .hero-title { font-size: clamp(2.2rem, 16vw, 3.5rem) !important; }
-            .hero-subtitle { font-size: clamp(2.2rem, 16vw, 3.5rem) !important; }
+            .hero { padding: 0 14px 16px 14px; overflow: hidden; }
+            .hero-title { font-size: clamp(2.2rem, 16vw, 3.5rem) !important; white-space: normal !important; }
+            .hero-subtitle { font-size: clamp(2.2rem, 16vw, 3.5rem) !important; white-space: normal !important; }
             .btn-outline, .btn-primary { padding: 10px 18px; font-size: 10px; }
             .hero-cta { gap: 6px; }
 
+            .about-text { max-width: 100vw; overflow: hidden; }
             .about-text .about-char { font-size: clamp(1.6rem, 8vw, 2.5rem) !important; }
-            .about-content { bottom: 6%; }
-            .about-content p { font-size: 0.85rem; }
+            .about-content { top: 50%; bottom: auto; transform: translateY(-50%); }
+            .about-content p { font-size: 0.85rem; text-align: center; }
 
+            .cursus-text { max-width: 100vw; overflow: hidden; }
             .cursus-text .cursus-char { font-size: clamp(1.6rem, 8vw, 2.5rem) !important; }
             .cursus-content { max-height: 65vh; }
             .timeline-item { margin-bottom: 16px; }
@@ -3036,7 +3062,9 @@
 
             // Dynamically set scroll height based on project count for smooth pacing
             const scrollSection9 = document.getElementById('scrollSection9');
-            scrollSection9.style.height = Math.max(300, projets.length * 60) + 'vh';
+            const isMobile = window.innerWidth <= 768;
+            const vhPerProject = isMobile ? 18 : 30;
+            scrollSection9.style.height = Math.max(200, projets.length * vhPerProject) + 'vh';
 
             ScrollTrigger.create({
                 trigger: '#scrollSection9',
