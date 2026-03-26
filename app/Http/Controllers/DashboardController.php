@@ -34,6 +34,7 @@ class DashboardController extends Controller
         }
 
         if ($user->isAdmin()) {
+            try {
             $todayStart = now()->startOfDay();
 
             $todayVisits = Visit::where('created_at', '>=', $todayStart)->count();
@@ -113,8 +114,12 @@ class DashboardController extends Controller
                 ->limit(20)
                 ->get();
 
+            $pendingProjects = Projet::with('user')->pending()->latest()->get();
+            $submittedProjects = Projet::with('user')->latest()->get();
+
             return view('admin.dashboard', [
-                'pendingProjects' => Projet::with('user')->pending()->latest()->get(),
+                'pendingProjects' => $pendingProjects,
+                'submittedProjects' => $submittedProjects,
                 'approvedProjectsCount' => Projet::approved()->count(),
                 'usersCount' => \App\Models\User::count(),
                 'contactMessages' => $contactMessages,
@@ -136,6 +141,27 @@ class DashboardController extends Controller
                 'topLocations' => $topLocations,
                 'visitors' => $visitors,
             ]);
+            } catch (\Throwable $e) {
+                return view('admin.dashboard', [
+                    'pendingProjects' => collect(),
+                    'submittedProjects' => collect(),
+                    'approvedProjectsCount' => 0,
+                    'usersCount' => 0,
+                    'contactMessages' => $contactMessages,
+                    'todayVisits' => 0, 'todayUnique' => 0,
+                    'weekVisits' => 0, 'weekUnique' => 0,
+                    'monthVisits' => 0, 'monthUnique' => 0,
+                    'yearVisits' => 0, 'yearUnique' => 0,
+                    'totalVisits' => 0, 'totalUnique' => 0,
+                    'recentVisits' => collect(),
+                    'last7Days' => collect(),
+                    'last4Weeks' => collect(),
+                    'last12Months' => collect(),
+                    'hourlyData' => array_fill(0, 24, 0),
+                    'topLocations' => collect(),
+                    'visitors' => collect(),
+                ]);
+            }
         }
 
         return view('admin.dashboard', [

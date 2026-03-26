@@ -31,7 +31,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'MonTerrain',
-                'description' => 'Plateforme de réservation de terrains de sport avec calendrier FullCalendar, système de paiement, confirmation/annulation des réservations, personnalisation du curseur et panneau d\'administration.',
+                'description' => 'Tu veux réserver un terrain de foot ou de basket ? Tu choisis ton créneau sur le calendrier, tu paies, c\'est confirmé. Côté admin, tout se gère depuis un panneau dédié.',
                 'image' => 'images/projets/monterrain.png',
                 'lien' => 'https://monterrain-02i2.onrender.com',
                 'github' => 'https://github.com/papechk/monterrain',
@@ -48,7 +48,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'TaskManager',
-                'description' => 'Application de gestion de tâches avec système de rôles (admin, manager, utilisateur), assignation de tâches, filtrage par statut/priorité et tableau de bord par rôle.',
+                'description' => 'Outil de gestion de tâches avec trois niveaux d\'accès : admin, manager, utilisateur. Chacun voit ses tâches, peut filtrer par priorité ou statut, et assigner du travail aux autres.',
                 'image' => 'images/projets/taskmanager.png',
                 'lien' => 'https://taskmanager-uvp6.onrender.com',
                 'github' => 'https://github.com/papechk/TaskManager',
@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'GStockBoncoin',
-                'description' => 'Système de gestion de stock et point de vente : boutiques, catégories, produits, clients, ventes avec lignes de vente, mouvements de stock, dépenses et résumés journaliers.',
+                'description' => 'Gestion complète d\'un commerce : stock, produits, ventes, clients, dépenses. Chaque boutique a ses propres données et ses résumés de fin de journée. Le plus gros projet que j\'ai fait en Laravel + Vue.',
                 'image' => 'images/projets/gstockboncoin.png',
                 'lien' => 'https://gstockboncoin.onrender.com',
                 'github' => 'https://github.com/papechk/gStockBoncoin',
@@ -82,7 +82,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'SignalementUrbain',
-                'description' => 'Plateforme de signalement urbain avec carte interactive Leaflet style Waze, gestion des catégories de signalements, réservation de terrains, système de paiement et tableau de bord.',
+                'description' => 'Les gens signalent des problèmes dans leur quartier (nid de poule, lampadaire cassé…) et ça s\'affiche sur une carte Leaflet un peu comme Waze. L\'admin valide ou rejette les signalements.',
                 'image' => 'images/projets/signalementurbain.png',
                 'lien' => 'https://signalementurbain.onrender.com',
                 'github' => 'https://github.com/papechk/SignalementUrbain',
@@ -99,7 +99,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'ClassLog',
-                'description' => 'Application desktop WinForms de gestion scolaire : classes, départements, matières, professeurs, responsables, séances, devoirs, emplois du temps et affectations avec Entity Framework.',
+                'description' => 'App desktop en C# WinForms pour gérer le cahier de textes d\'un établissement. Profs, matières, séances, devoirs, emplois du temps — tout est relié avec Entity Framework derrière.',
                 'image' => 'images/projets/gestion-cahier-textes.png',
                 'lien' => 'https://github.com/papechk/GestionCahierTexte/releases/tag/v1.0.0',
                 'github' => 'https://github.com/papechk/GestionCahierTexte',
@@ -116,7 +116,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'SunuTontine',
-                'description' => 'Application de gestion de tontines avec CRUD tontines et membres, suivi des cotisations, calendrier FullCalendar, rôles gestionnaire/participant et tableau de bord par rôle.',
+                'description' => 'Pour gérer les tontines entre amis ou collègues. On crée une tontine, on ajoute les membres, on suit qui a cotisé ou pas sur un calendrier. Le gestionnaire et les participants ont chacun leur vue.',
                 'image' => 'images/projets/sunutontine.png',
                 'lien' => null,
                 'github' => 'https://github.com/papechk/sunuTontine',
@@ -133,7 +133,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'PapiGPT',
-                'description' => 'Application de création de lettres et documents avec modèles par catégorie (Autorisation, Collaboration, Financement, Partenariat, Invitation, Notification, Recommandation…), 5 designs, rédaction libre et gestion de templates.',
+                'description' => 'Générateur de lettres formelles. Tu choisis un type (autorisation, partenariat, recommandation…), tu remplis les champs, et ça te sort une lettre propre. 5 mises en page différentes, ou tu rédiges toi-même.',
                 'image' => 'images/projets/papigpt.png',
                 'lien' => null,
                 'github' => 'https://github.com/papechk/papigpt',
@@ -150,7 +150,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'GestionSalaire',
-                'description' => 'Application de gestion des salaires avec départements, employés, calcul et suivi des salaires, authentification et tableau de bord.',
+                'description' => 'Petit outil RH pour calculer et suivre les salaires des employés par département. Rien de fou mais ça fait le job proprement.',
                 'image' => 'images/projets/gestionsalaire.png',
                 'lien' => 'https://gestionsalaire-2y3h.onrender.com',
                 'github' => 'https://github.com/papechk/gestionSalaire',
@@ -167,7 +167,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'Quiz Interactif',
-                'description' => 'Application de quiz interactive avec catégories Linux, Oracle, Python, Windows Server et Admission Sherbrooke. Suivi des scores via Supabase, mini-cours intégrés et interface responsive.',
+                'description' => 'Quiz en ligne sur Linux, Oracle, Python, Windows Server et l\'admission à Sherbrooke. Les scores sont sauvegardés sur Supabase, et y a des mini-cours pour réviser entre les tentatives.',
                 'image' => 'images/projets/quiz-interactif.png',
                 'lien' => 'https://pkeinde6.github.io/quiz-app',
                 'github' => 'https://github.com/Pkeinde6/quiz-app',
@@ -184,7 +184,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'TestImo',
-                'description' => 'Application d\'annonces immobilières avec gestion de propriétés, système de tags, panneau d\'administration et page d\'accueil vitrine.',
+                'description' => 'Site d\'annonces immobilières tout simple. On poste des biens, on les tague, et la page d\'accueil les affiche. L\'admin gère le tout depuis son espace.',
                 'image' => 'images/projets/testimo.png',
                 'lien' => null,
                 'github' => 'https://github.com/papechk/testImo',
@@ -201,7 +201,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'Star Group',
-                'description' => 'Site vitrine multi-pages pour l\'entreprise Star Group avec accueil, services, à propos et contact.',
+                'description' => 'Site vitrine que j\'ai fait pour l\'entreprise Star Group. Pages classiques : accueil, services, à propos, contact. PHP/CSS/JS pur, pas de framework.',
                 'image' => 'images/projets/star-group.png',
                 'lien' => 'https://star-groupe.com',
                 'github' => 'https://github.com/Pkeinde6/Star-group',
@@ -218,7 +218,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'Projets Python',
-                'description' => 'Exercices et projets Python : jeu de devinette, cryptographie, convertisseur, manipulation de listes et fonctions.',
+                'description' => 'Quelques trucs que j\'ai codés en Python pour m\'entraîner : un jeu de devinette, du chiffrement, un convertisseur, et des exercices sur les listes et fonctions.',
                 'image' => 'images/projets/projets-python.png',
                 'lien' => null,
                 'github' => 'https://github.com/Pkeinde6/python-projects',
@@ -235,7 +235,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'Tic Tac Toe',
-                'description' => 'Jeu de morpion classique développé en Python (CLI) et en Vue.js (web), avec détection automatique des victoires et matchs nuls.',
+                'description' => 'Le morpion classique, fait en deux versions : une en Python dans le terminal et une en Vue.js pour le web. Détecte tout seul qui gagne ou si c\'est match nul.',
                 'image' => 'images/projets/tic-tac-toe.png',
                 'lien' => null,
                 'github' => 'https://github.com/Pkeinde6/tic-tac-toe',
@@ -252,7 +252,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'To-Do List',
-                'description' => 'Application de gestion de tâches avec Vue 3 Composition API : ajout, suppression, filtrage (toutes/actives/terminées) et persistance via localStorage.',
+                'description' => 'Une to-do list en Vue 3 (Composition API). On ajoute, coche, supprime, filtre par statut — et tout reste sauvegardé dans le localStorage du navigateur.',
                 'image' => 'images/projets/todo-list.png',
                 'lien' => 'https://pkeinde6.github.io/todo-list/',
                 'github' => 'https://github.com/Pkeinde6/todo-list',
@@ -269,7 +269,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'Projets .NET',
-                'description' => 'Collection de projets console et desktop en C# .NET : calculatrices, algorithmes (Armstrong, nombres premiers, Euclide, méthode égyptienne), équations du second degré.',
+                'description' => 'Mes projets d\'apprentissage en C# .NET : calculatrices, algorithmes classiques (Armstrong, nombres premiers, Euclide, méthode égyptienne), résolution d\'équations du second degré.',
                 'image' => 'images/projets/projets-dotnet.png',
                 'lien' => null,
                 'github' => 'https://github.com/Pkeinde6/dotnet-projects',
@@ -286,7 +286,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'Système Bancaire',
-                'description' => 'Système bancaire orienté objet en Java avec gestion de comptes courants, comptes épargne, dépôts et retraits.',
+                'description' => 'Projet Java pour pratiquer la POO : comptes courants, comptes épargne, dépôts, retraits. Rien de visuel, tout en console, mais la logique objet est propre.',
                 'image' => 'images/projets/systeme-bancaire.png',
                 'lien' => null,
                 'github' => 'https://github.com/Pkeinde6/java-banking-system',
@@ -303,7 +303,7 @@ class DatabaseSeeder extends Seeder
             [
                 'user_id' => $user->id,
                 'titre' => 'Gestion Scolaire',
-                'description' => 'Application desktop de gestion d\'établissement scolaire : inscription élèves, gestion des classes, saisie de notes, emplois du temps et génération de bulletins.',
+                'description' => 'App desktop WinForms pour une école : on inscrit les élèves, on gère les classes, on saisit les notes et ça génère les bulletins. Connecté à SQL Server.',
                 'image' => 'images/projets/gestion-scolaire.png',
                 'lien' => null,
                 'github' => 'https://github.com/Pkeinde6/gestionEcole',

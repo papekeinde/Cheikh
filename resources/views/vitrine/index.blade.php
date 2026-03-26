@@ -17,7 +17,7 @@
 
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { overflow-x: clip; }
+        html { overflow-x: clip; scroll-behavior: smooth; }
 
         :root {
             --accent: #f16529;
@@ -183,6 +183,18 @@
             height: 100vh;
             position: relative;
             overflow: hidden;
+        }
+
+        /* GPU-accelerate fixed overlay sections */
+        #projets,
+        #contact,
+        .about-content,
+        .cursus-text,
+        .cursus-content,
+        .stacks-section {
+            will-change: transform, opacity;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
         }
 
         .hero-photo {
@@ -2349,7 +2361,7 @@
                 trigger: '#scrollSection1',
                 start: 'top bottom',
                 end: 'top top',
-                scrub: 0.5,
+                scrub: 1.0,
                 onLeaveBack: () => {
                     heroText.classList.remove('is-morphing');
                     gsap.set(heroText, { clearProps: 'all' });
@@ -2395,7 +2407,7 @@
                 trigger: '#scrollSection2',
                 start: 'top bottom',
                 end: 'center center',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
                     overlayProgress = progress;
@@ -2437,7 +2449,7 @@
                 trigger: '#scrollSection3',
                 start: 'top bottom',
                 end: 'top center',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
                     const totalExit = window.innerWidth + 500;
@@ -2487,7 +2499,7 @@
                 trigger: '#apropos',
                 start: 'top bottom',
                 end: 'top top',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
                     const mob = window.innerWidth < 768;
@@ -2552,7 +2564,7 @@
                 trigger: '#scrollSection5',
                 start: 'top bottom',
                 end: 'center center',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
 
@@ -2601,7 +2613,7 @@
                 trigger: '#scrollSectionAboutExit',
                 start: 'top bottom',
                 end: 'top center',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
                     const fadeOut = 1 - progress;
@@ -2645,7 +2657,7 @@
                 trigger: '#cursus',
                 start: 'top bottom',
                 end: 'top top',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
 
@@ -2703,7 +2715,7 @@
                 trigger: '#scrollSectionCursusContent',
                 start: 'top bottom',
                 end: 'center center',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
 
@@ -2728,7 +2740,7 @@
                 trigger: '#scrollSectionCursusExit',
                 start: 'top bottom',
                 end: 'top center',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: () => {
                     cursusText.style.opacity = '1';
                     cursusContent.style.opacity = '1';
@@ -2768,7 +2780,7 @@
                 trigger: '#scrollSection6',
                 start: 'top bottom',
                 end: 'top top',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
 
@@ -2817,7 +2829,7 @@
                 trigger: '#scrollSection7',
                 start: 'top bottom',
                 end: 'center center',
-                scrub: 0.8,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
 
@@ -2856,7 +2868,7 @@
                 trigger: '#scrollSection8',
                 start: 'top bottom',
                 end: 'top top',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
 
@@ -3095,7 +3107,7 @@
                 trigger: '#scrollSectionContact',
                 start: 'top bottom',
                 end: 'top top',
-                scrub: 0.5,
+                scrub: 1.0,
                 onUpdate: (self) => {
                     const progress = self.progress;
 

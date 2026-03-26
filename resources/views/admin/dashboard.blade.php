@@ -631,7 +631,7 @@
                                         <span class="status-chip {{ $project->status === 'approved' ? 'bg-green-100 text-green-700' : ($project->status === 'rejected' ? 'bg-red-100 text-red-700' : 'bg-amber-100 text-amber-800') }}">{{ strtoupper($project->status) }}</span>
                                         <span class="status-chip bg-brand/10 text-brand">{{ $project->type }}</span>
                                     </div>
-                                    <p class="mt-2 text-sm text-slate-500">Soumis par {{ $project->user->nom }} · {{ $project->user->email }}</p>
+                                    <p class="mt-2 text-sm text-slate-500">Soumis par {{ $project->user?->nom ?? 'Utilisateur supprimé' }} · {{ $project->user?->email ?? '-' }}</p>
                                     <p class="mt-3 text-sm leading-6 text-slate-700">{{ $project->description }}</p>
                                 </div>
                                 <div class="w-full lg:w-72 soft-panel">
