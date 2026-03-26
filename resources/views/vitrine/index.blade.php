@@ -1523,6 +1523,11 @@
             .projet-nav-btn svg { width: 16px; height: 16px; }
             .projets-progress-bar { width: calc(100% - 32px); margin: 0 16px 8px; }
 
+            /* Disable WebGL/hover effects on touch */
+            .projet-image { cursor: auto; }
+            .projet-image:hover img { opacity: 1; }
+            .projet-image:hover .webgl-canvas { opacity: 0; }
+
             /* Contact */
             .contact-section { overflow-y: auto; }
             .contact-inner {
@@ -1557,10 +1562,13 @@
             .cursor-blob { display: none !important; }
 
             /* Reduce scroll length on mobile: transition & exit sections shorter */
-            .scroll-section { height: 60vh; }
-            #scrollSection1, #scrollSection2, #scrollSection3 { height: 50vh; }
-            #scrollSectionAboutExit, #scrollSectionCursusExit { height: 40vh; }
-            #scrollSection6, #scrollSection7, #scrollSection8 { height: 40vh; }
+            .scroll-section { height: 50vh; }
+            #scrollSection1, #scrollSection2, #scrollSection3 { height: 30vh; }
+            #apropos, #cursus { height: 50vh; }
+            #scrollSection5, #scrollSectionCursusContent { height: 50vh; }
+            #scrollSectionAboutExit, #scrollSectionCursusExit { height: 25vh; }
+            #scrollSection6, #scrollSection7, #scrollSection8 { height: 20vh; }
+            #scrollSectionContact { height: 30vh; }
 
             /* Scroll hint */
             .scroll-hint { bottom: 20px; }
@@ -2554,7 +2562,7 @@
                             w.style.transform = 'translateY(18px)';
                         });
                         if (window.innerWidth < 768) {
-                            aboutContent.style.transform = `translateY(40px)`;
+                            aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
                         } else {
                             aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
                         }
@@ -2564,7 +2572,7 @@
                     // Container slides up
                     const slideUp = (1 - progress) * 40;
                     if (window.innerWidth < 768) {
-                        aboutContent.style.transform = `translateY(${slideUp}px)`;
+                        aboutContent.style.transform = `translateY(calc(-50% + ${slideUp}px))`;
                     } else {
                         aboutContent.style.transform = `translateY(calc(-50% + ${slideUp}px))`;
                     }
@@ -2584,11 +2592,7 @@
                         w.style.opacity = '0';
                         w.style.transform = 'translateY(18px)';
                     });
-                    if (window.innerWidth < 768) {
-                        aboutContent.style.transform = `translateY(40px)`;
-                    } else {
-                        aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
-                    }
+                    aboutContent.style.transform = `translateY(calc(-50% + 40px))`;
                 }
             });
 
