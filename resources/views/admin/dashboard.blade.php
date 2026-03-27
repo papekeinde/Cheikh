@@ -821,8 +821,55 @@
                 100% { transform: scale(1); opacity: 0.12; }
             }
             .leaflet-pulse { animation: leafletPulse 3.5s ease-in-out infinite; transform-origin: center; }
+            @keyframes myLocPulse {
+                0% { transform: scale(1); opacity: 0.25; }
+                50% { transform: scale(2.2); opacity: 0; }
+                100% { transform: scale(1); opacity: 0.25; }
+            }
+            .my-loc-pulse { animation: myLocPulse 2.5s ease-in-out infinite; transform-origin: center; }
         `;
         document.head.appendChild(style);
+
+        // Show user's current position (blue dot like Apple Maps)
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(pos) {
+                const myLatLng = [pos.coords.latitude, pos.coords.longitude];
+
+                // Blue pulse ring
+                L.circleMarker(myLatLng, {
+                    radius: 20,
+                    fillColor: '#007AFF',
+                    fillOpacity: 0.2,
+                    stroke: false,
+                    className: 'my-loc-pulse'
+                }).addTo(map);
+
+                // White border ring
+                L.circleMarker(myLatLng, {
+                    radius: 9,
+                    fillColor: '#ffffff',
+                    fillOpacity: 1,
+                    color: '#ffffff',
+                    weight: 3,
+                    opacity: 1
+                }).addTo(map);
+
+                // Blue inner dot
+                L.circleMarker(myLatLng, {
+                    radius: 7,
+                    fillColor: '#007AFF',
+                    fillOpacity: 1,
+                    stroke: false,
+                }).addTo(map).bindPopup(
+                    '<div style="text-align:center">' +
+                    '<div style="font-weight:600;font-size:13px">📍 Ma position</div>' +
+                    '</div>',
+                    { closeButton: false, offset: [0, -4] }
+                );
+            }, function(err) {
+                console.log('Geolocation error:', err.message);
+            }, { enableHighAccuracy: true, timeout: 10000 });
+        }
     }
 </script>
 @endpush
