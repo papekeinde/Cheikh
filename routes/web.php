@@ -24,64 +24,8 @@ Route::get('/__health', function () {
     return response()->json([
         'status' => 'ok',
         'service' => 'foliolara',
-        'branch' => 'gpt',
         'timestamp' => now()->toDateTimeString(),
     ]);
-});
-
-Route::get('/__debug-render', function () {
-    try {
-        view('auth.login')->render();
-        view('vitrine.contact')->render();
-
-        return response()->json([
-            'status' => 'ok',
-            'message' => 'login and contact views render correctly',
-        ]);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'status' => 'error',
-            'exception' => get_class($e),
-            'message' => $e->getMessage(),
-            'file' => $e->getFile(),
-            'line' => $e->getLine(),
-        ], 500);
-    }
-});
-
-Route::get('/__debug-db', function () {
-    try {
-        $pdo = \Illuminate\Support\Facades\DB::connection()->getPdo();
-        $driver = config('database.default');
-        $tables = [];
-        if ($driver === 'sqlite') {
-            $raw = \Illuminate\Support\Facades\DB::select("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name");
-            $tables = array_map(fn($t) => $t->name, $raw);
-        } else {
-            $raw = \Illuminate\Support\Facades\DB::select("SELECT tablename FROM pg_tables WHERE schemaname = 'public'");
-            $tables = array_map(fn($t) => $t->tablename, $raw);
-        }
-        $userCount = \Illuminate\Support\Facades\DB::table('users')->count();
-        $projetCount = \Illuminate\Support\Facades\DB::table('projets')->count();
-        return response()->json([
-            'status' => 'ok',
-            'driver' => $driver,
-            'db_connection_env' => env('DB_CONNECTION'),
-            'db_database_env' => env('DB_DATABASE'),
-            'tables' => $tables,
-            'user_count' => $userCount,
-            'projet_count' => $projetCount,
-        ]);
-    } catch (\Throwable $e) {
-        return response()->json([
-            'status' => 'error',
-            'exception' => get_class($e),
-            'message' => $e->getMessage(),
-            'driver' => config('database.default'),
-            'db_connection_env' => env('DB_CONNECTION'),
-            'db_database_env' => env('DB_DATABASE'),
-        ], 500);
-    }
 });
 
 Route::get('/contact', function () {
