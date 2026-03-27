@@ -329,112 +329,115 @@
 
                         {{-- Cercles par pays --}}
                         @php
-                            // Mapping simplifié pays → coordonnées approximatives sur la carte SVG 1000x500
+                            // Coordonnées projection équirectangulaire: x=(lon+180)/360*1000, y=(90-lat)/180*500
                             $countryCoords = [
-                                'France' => [480, 175], 'FR' => [480, 175],
-                                'Senegal' => [410, 260], 'SN' => [410, 260],
-                                'United States' => [220, 185], 'US' => [220, 185], 'USA' => [220, 185], 'États-Unis' => [220, 185],
-                                'Canada' => [230, 140], 'CA' => [230, 140],
-                                'United Kingdom' => [460, 155], 'GB' => [460, 155], 'UK' => [460, 155], 'Royaume-Uni' => [460, 155],
-                                'Germany' => [505, 165], 'DE' => [505, 165], 'Allemagne' => [505, 165],
-                                'Spain' => [465, 195], 'ES' => [465, 195], 'Espagne' => [465, 195],
-                                'Italy' => [510, 190], 'IT' => [510, 190], 'Italie' => [510, 190],
-                                'Belgium' => [485, 165], 'BE' => [485, 165], 'Belgique' => [485, 165],
-                                'Switzerland' => [495, 178], 'CH' => [495, 178], 'Suisse' => [495, 178],
-                                'Netherlands' => [487, 158], 'NL' => [487, 158], 'Pays-Bas' => [487, 158],
-                                'Portugal' => [450, 195], 'PT' => [450, 195],
-                                'Morocco' => [450, 225], 'MA' => [450, 225], 'Maroc' => [450, 225],
-                                'Tunisia' => [505, 218], 'TN' => [505, 218], 'Tunisie' => [505, 218],
-                                'Algeria' => [480, 225], 'DZ' => [480, 225], 'Algérie' => [480, 225],
-                                'Mali' => [455, 265], 'ML' => [455, 265],
-                                'Guinea' => [420, 270], 'GN' => [420, 270], 'Guinée' => [420, 270],
-                                'Ivory Coast' => [440, 280], 'CI' => [440, 280], "Côte d'Ivoire" => [440, 280],
-                                'Cameroon' => [505, 285], 'CM' => [505, 285], 'Cameroun' => [505, 285],
-                                'Nigeria' => [490, 280], 'NG' => [490, 280],
-                                'Ghana' => [460, 280], 'GH' => [460, 280],
-                                'Congo' => [520, 310], 'CD' => [530, 310], 'CG' => [520, 305],
-                                'South Africa' => [535, 385], 'ZA' => [535, 385], 'Afrique du Sud' => [535, 385],
-                                'Egypt' => [545, 225], 'EG' => [545, 225], 'Égypte' => [545, 225],
-                                'Kenya' => [565, 305], 'KE' => [565, 305],
-                                'Ethiopia' => [570, 280], 'ET' => [570, 280], 'Éthiopie' => [570, 280],
-                                'India' => [680, 245], 'IN' => [680, 245], 'Inde' => [680, 245],
-                                'China' => [750, 210], 'CN' => [750, 210], 'Chine' => [750, 210],
-                                'Japan' => [830, 195], 'JP' => [830, 195], 'Japon' => [830, 195],
-                                'South Korea' => [810, 200], 'KR' => [810, 200], 'Corée du Sud' => [810, 200],
-                                'Russia' => [650, 130], 'RU' => [650, 130], 'Russie' => [650, 130],
-                                'Turkey' => [555, 195], 'TR' => [555, 195], 'Turquie' => [555, 195],
-                                'Brazil' => [310, 340], 'BR' => [310, 340], 'Brésil' => [310, 340],
-                                'Mexico' => [180, 245], 'MX' => [180, 245], 'Mexique' => [180, 245],
-                                'Argentina' => [285, 395], 'AR' => [285, 395], 'Argentine' => [285, 395],
-                                'Colombia' => [260, 290], 'CO' => [260, 290], 'Colombie' => [260, 290],
-                                'Australia' => [825, 385], 'AU' => [825, 385], 'Australie' => [825, 385],
-                                'Indonesia' => [785, 310], 'ID' => [785, 310], 'Indonésie' => [785, 310],
-                                'Saudi Arabia' => [580, 240], 'SA' => [580, 240], 'Arabie Saoudite' => [580, 240],
-                                'UAE' => [610, 245], 'AE' => [610, 245], 'Émirats arabes unis' => [610, 245],
-                                'Poland' => [520, 160], 'PL' => [520, 160], 'Pologne' => [520, 160],
-                                'Sweden' => [510, 130], 'SE' => [510, 130], 'Suède' => [510, 130],
-                                'Norway' => [500, 120], 'NO' => [500, 120], 'Norvège' => [500, 120],
-                                'Ireland' => [445, 155], 'IE' => [445, 155], 'Irlande' => [445, 155],
-                                'Austria' => [510, 175], 'AT' => [510, 175], 'Autriche' => [510, 175],
-                                'Romania' => [535, 178], 'RO' => [535, 178], 'Roumanie' => [535, 178],
-                                'Ukraine' => [550, 165], 'UA' => [550, 165],
-                                'Pakistan' => [650, 235], 'PK' => [650, 235],
-                                'Bangladesh' => [700, 248], 'BD' => [700, 248],
-                                'Vietnam' => [760, 260], 'VN' => [760, 260],
-                                'Thailand' => [745, 260], 'TH' => [745, 260], 'Thaïlande' => [745, 260],
-                                'Philippines' => [810, 265], 'PH' => [810, 265],
-                                'Malaysia' => [770, 290], 'MY' => [770, 290], 'Malaisie' => [770, 290],
-                                'Singapore' => [775, 300], 'SG' => [775, 300], 'Singapour' => [775, 300],
-                                'Mauritania' => [425, 245], 'MR' => [425, 245], 'Mauritanie' => [425, 245],
-                                'Gambia' => [410, 258], 'GM' => [410, 258], 'Gambie' => [410, 258],
-                                'Burkina Faso' => [454, 272], 'BF' => [454, 272],
-                                'Niger' => [475, 260], 'NE' => [475, 260],
-                                'Togo' => [465, 280], 'TG' => [465, 280],
-                                'Benin' => [475, 280], 'BJ' => [475, 280], 'Bénin' => [475, 280],
-                                'Gabon' => [510, 305], 'GA' => [510, 305],
-                                'Tanzania' => [560, 320], 'TZ' => [560, 320], 'Tanzanie' => [560, 320],
+                                'France' => [506, 122], 'FR' => [506, 122],
+                                'Senegal' => [452, 209], 'SN' => [452, 209],
+                                'United States' => [228, 142], 'US' => [228, 142], 'USA' => [228, 142], 'États-Unis' => [228, 142],
+                                'Canada' => [206, 94], 'CA' => [206, 94],
+                                'United Kingdom' => [497, 103], 'GB' => [497, 103], 'UK' => [497, 103], 'Royaume-Uni' => [497, 103],
+                                'Germany' => [525, 108], 'DE' => [525, 108], 'Allemagne' => [525, 108],
+                                'Spain' => [489, 139], 'ES' => [489, 139], 'Espagne' => [489, 139],
+                                'Italy' => [533, 133], 'IT' => [533, 133], 'Italie' => [533, 133],
+                                'Belgium' => [511, 109], 'BE' => [511, 109], 'Belgique' => [511, 109],
+                                'Switzerland' => [522, 119], 'CH' => [522, 119], 'Suisse' => [522, 119],
+                                'Netherlands' => [514, 106], 'NL' => [514, 106], 'Pays-Bas' => [514, 106],
+                                'Portugal' => [478, 142], 'PT' => [478, 142],
+                                'Morocco' => [483, 161], 'MA' => [483, 161], 'Maroc' => [483, 161],
+                                'Tunisia' => [525, 156], 'TN' => [525, 156], 'Tunisie' => [525, 156],
+                                'Algeria' => [506, 172], 'DZ' => [506, 172], 'Algérie' => [506, 172],
+                                'Mali' => [489, 203], 'ML' => [489, 203],
+                                'Guinea' => [469, 219], 'GN' => [469, 219], 'Guinée' => [469, 219],
+                                'Ivory Coast' => [485, 229], 'CI' => [485, 229], "Côte d'Ivoire" => [485, 229],
+                                'Cameroon' => [533, 233], 'CM' => [533, 233], 'Cameroun' => [533, 233],
+                                'Nigeria' => [522, 225], 'NG' => [522, 225],
+                                'Ghana' => [497, 228], 'GH' => [497, 228],
+                                'Congo' => [544, 262], 'CD' => [544, 262], 'CG' => [544, 251],
+                                'South Africa' => [569, 333], 'ZA' => [569, 333], 'Afrique du Sud' => [569, 333],
+                                'Egypt' => [583, 178], 'EG' => [583, 178], 'Égypte' => [583, 178],
+                                'Kenya' => [603, 253], 'KE' => [603, 253],
+                                'Ethiopia' => [608, 225], 'ET' => [608, 225], 'Éthiopie' => [608, 225],
+                                'India' => [717, 192], 'IN' => [717, 192], 'Inde' => [717, 192],
+                                'China' => [789, 153], 'CN' => [789, 153], 'Chine' => [789, 153],
+                                'Japan' => [883, 150], 'JP' => [883, 150], 'Japon' => [883, 150],
+                                'South Korea' => [856, 150], 'KR' => [856, 150], 'Corée du Sud' => [856, 150],
+                                'Russia' => [778, 78], 'RU' => [778, 78], 'Russie' => [778, 78],
+                                'Turkey' => [597, 142], 'TR' => [597, 142], 'Turquie' => [597, 142],
+                                'Brazil' => [358, 289], 'BR' => [358, 289], 'Brésil' => [358, 289],
+                                'Mexico' => [217, 186], 'MX' => [217, 186], 'Mexique' => [217, 186],
+                                'Argentina' => [325, 356], 'AR' => [325, 356], 'Argentine' => [325, 356],
+                                'Colombia' => [300, 239], 'CO' => [300, 239], 'Colombie' => [300, 239],
+                                'Australia' => [869, 319], 'AU' => [869, 319], 'Australie' => [869, 319],
+                                'Indonesia' => [833, 264], 'ID' => [833, 264], 'Indonésie' => [833, 264],
+                                'Saudi Arabia' => [625, 183], 'SA' => [625, 183], 'Arabie Saoudite' => [625, 183],
+                                'UAE' => [650, 183], 'AE' => [650, 183], 'Émirats arabes unis' => [650, 183],
+                                'Poland' => [553, 106], 'PL' => [553, 106], 'Pologne' => [553, 106],
+                                'Sweden' => [547, 78], 'SE' => [547, 78], 'Suède' => [547, 78],
+                                'Norway' => [528, 78], 'NO' => [528, 78], 'Norvège' => [528, 78],
+                                'Ireland' => [478, 103], 'IE' => [478, 103], 'Irlande' => [478, 103],
+                                'Austria' => [539, 119], 'AT' => [539, 119], 'Autriche' => [539, 119],
+                                'Romania' => [569, 122], 'RO' => [569, 122], 'Roumanie' => [569, 122],
+                                'Ukraine' => [589, 114], 'UA' => [589, 114],
+                                'Pakistan' => [692, 167], 'PK' => [692, 167],
+                                'Bangladesh' => [750, 183], 'BD' => [750, 183],
+                                'Vietnam' => [800, 206], 'VN' => [800, 206],
+                                'Thailand' => [781, 207], 'TH' => [781, 207], 'Thaïlande' => [781, 207],
+                                'Philippines' => [839, 217], 'PH' => [839, 217],
+                                'Malaysia' => [803, 239], 'MY' => [803, 239], 'Malaisie' => [803, 239],
+                                'Singapore' => [789, 246], 'SG' => [789, 246], 'Singapour' => [789, 246],
+                                'Mauritania' => [467, 194], 'MR' => [467, 194], 'Mauritanie' => [467, 194],
+                                'Gambia' => [454, 213], 'GM' => [454, 213], 'Gambie' => [454, 213],
+                                'Burkina Faso' => [496, 217], 'BF' => [496, 217],
+                                'Niger' => [522, 201], 'NE' => [522, 201],
+                                'Togo' => [503, 228], 'TG' => [503, 228],
+                                'Benin' => [506, 224], 'BJ' => [506, 224], 'Bénin' => [506, 224],
+                                'Gabon' => [532, 252], 'GA' => [532, 252],
+                                'Tanzania' => [597, 268], 'TZ' => [597, 268], 'Tanzanie' => [597, 268],
                             ];
 
                             $maxCount = $topLocations->max('visit_count') ?: 1;
                         @endphp
 
-                        {{-- Continents — Apple Maps style (beige/sand fill, soft edges) --}}
+                        {{-- Continents — projection équirectangulaire simplifiée --}}
                         {{-- Greenland --}}
-                        <path class="map-land" d="M310,55 Q330,40 360,42 Q385,44 395,58 Q400,72 390,85 Q375,95 355,92 Q330,88 315,78 Q305,68 310,55 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
-                        {{-- North America --}}
-                        <path class="map-land" d="M85,110 Q100,85 140,72 Q175,62 210,68 Q245,72 270,82 Q290,75 305,85 Q310,100 300,115 L290,135 Q285,145 278,155 Q270,168 258,180 Q245,195 230,210 Q222,220 218,232 Q215,245 205,255 Q195,262 183,268 Q170,270 160,260 Q148,248 140,235 Q130,218 118,200 Q105,180 95,160 Q82,138 80,120 Q82,112 85,110 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
-                        {{-- Central America --}}
-                        <path class="map-land" d="M165,258 Q175,252 185,260 Q192,268 200,275 Q195,282 188,288 Q178,290 172,285 Q165,278 162,270 Q163,262 165,258 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M363,42 Q370,28 385,22 Q400,20 412,28 Q418,38 416,52 Q412,62 403,67 Q392,65 380,58 Q368,50 363,42 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
+                        {{-- North America (avec Golfe du Mexique et Floride) --}}
+                        <path class="map-land" d="M33,69 Q55,88 75,92 L110,96 Q130,98 150,105 L153,117 Q156,130 160,144 Q170,152 178,158 L194,186 Q205,191 215,197 L228,206 Q240,202 250,197 L261,192 Q255,187 249,183 L238,178 Q237,174 237,170 Q243,168 250,168 L267,170 Q272,176 275,182 Q278,172 280,164 L289,153 Q292,146 295,139 L308,133 Q322,128 335,125 L353,119 Q348,111 342,103 Q330,88 319,74 Q315,62 311,50 Q273,43 236,42 Q194,44 153,47 Q97,48 42,50 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- South America --}}
-                        <path class="map-land" d="M230,282 Q250,272 275,275 Q300,278 318,290 Q332,302 340,318 Q345,335 342,355 Q338,375 328,392 Q315,410 300,422 Q285,432 272,428 Q258,420 250,405 Q242,388 238,368 Q235,348 233,328 Q230,308 228,295 Q229,286 230,282 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M275,250 Q280,240 289,228 L300,222 Q310,219 325,228 L355,242 Q380,252 400,261 L408,272 Q403,280 397,289 L386,306 Q380,314 372,325 L358,339 Q348,347 336,356 L322,367 Q316,380 313,392 L311,406 Q300,392 292,378 Q289,361 288,344 L286,322 Q283,303 280,286 Q278,272 275,258 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- Europe --}}
-                        <path class="map-land" d="M440,108 Q455,98 472,100 Q488,102 502,108 Q518,105 530,110 Q545,115 555,125 Q562,135 558,148 Q555,160 548,172 Q540,185 530,195 Q520,202 508,205 Q495,208 482,205 Q468,200 458,192 Q448,182 442,170 Q436,156 434,142 Q433,128 436,118 Q438,112 440,108 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M478,83 Q486,78 494,83 Q500,86 503,92 L506,100 Q508,106 514,108 L528,103 Q539,100 550,97 L564,100 Q575,106 581,117 Q583,128 578,136 L567,144 Q556,150 542,150 L528,144 Q519,147 508,150 L494,153 Q483,150 475,142 Q469,133 472,122 L478,111 Q481,103 483,97 Q480,92 478,86 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
+                        {{-- Scandinavia --}}
+                        <path class="map-land" d="M508,56 Q517,48 528,50 Q539,50 547,56 L556,64 Q561,72 561,81 L556,86 Q547,83 536,78 L522,75 Q514,72 511,67 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- British Isles --}}
-                        <path class="map-land" d="M445,130 Q450,122 458,120 Q465,122 468,128 Q470,136 466,142 Q460,146 454,145 Q448,142 446,136 Q445,132 445,130 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M492,86 Q497,81 500,83 Q503,88 503,94 Q500,100 497,103 Q493,100 491,97 Q490,92 492,86 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
+                        <path class="map-land" d="M481,92 Q484,89 486,92 Q488,97 486,100 Q483,103 481,100 Q479,97 481,92 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- Africa --}}
-                        <path class="map-land" d="M430,215 Q450,208 472,212 Q495,210 515,215 Q535,218 552,225 Q568,232 578,245 Q585,260 582,278 Q578,298 570,318 Q560,340 548,358 Q535,375 520,388 Q505,398 490,400 Q475,398 462,390 Q450,378 442,362 Q435,345 430,325 Q425,302 422,280 Q420,258 422,240 Q425,225 430,215 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M483,155 Q500,150 519,152 Q542,155 561,161 L581,170 Q594,178 603,192 L614,211 Q625,219 636,225 Q640,235 636,247 L625,261 Q619,272 614,283 L603,308 Q597,322 589,333 Q581,340 572,344 L556,347 Q542,344 531,336 L525,322 Q522,308 522,292 L519,272 Q514,258 506,247 L497,239 Q486,236 475,231 L464,222 Q456,214 453,206 Q455,198 458,192 L467,175 Q475,164 483,155 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- Middle East --}}
-                        <path class="map-land" d="M558,200 Q572,195 585,198 Q598,200 610,208 Q618,215 622,225 Q620,238 612,248 Q600,255 588,252 Q575,248 565,238 Q558,228 555,218 Q555,208 558,200 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M589,150 Q600,145 614,150 L628,161 Q639,172 642,186 L639,200 Q633,214 622,222 L608,225 Q597,222 589,214 L583,200 Q581,186 583,172 Q586,161 589,150 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- Russia / North Asia --}}
-                        <path class="map-land" d="M555,68 Q590,58 630,60 Q670,58 710,62 Q748,65 780,72 Q810,78 835,88 Q855,98 860,112 Q858,128 848,142 Q835,155 818,162 Q800,168 780,170 Q752,168 730,162 Q706,158 685,152 Q665,148 648,142 Q630,138 615,132 Q598,128 585,120 Q572,112 562,102 Q555,92 553,82 Q554,74 555,68 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
-                        {{-- South/East Asia --}}
-                        <path class="map-land" d="M625,165 Q645,158 668,162 Q690,168 710,178 Q730,185 748,195 Q765,205 775,218 Q782,232 778,248 Q772,262 760,272 Q745,278 728,275 Q710,270 695,260 Q678,252 665,240 Q652,228 642,215 Q635,200 630,188 Q626,175 625,165 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M583,58 Q617,45 661,42 Q706,39 756,44 L808,53 Q847,61 881,72 L914,86 Q933,97 942,114 Q944,131 933,144 L917,156 Q897,164 872,167 L842,169 Q814,167 786,164 L756,158 Q728,153 700,147 L672,142 Q644,136 619,128 L597,119 Q583,108 578,94 Q575,81 578,72 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
+                        {{-- East/South Asia --}}
+                        <path class="map-land" d="M633,142 Q653,136 675,142 L700,153 Q722,164 742,178 L758,194 Q772,211 781,228 L786,247 Q786,258 781,267 L769,275 Q756,278 742,272 L725,264 Q711,253 697,242 L683,228 Q669,214 658,197 L647,178 Q639,164 636,150 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- India --}}
-                        <path class="map-land" d="M645,232 Q658,225 672,228 Q685,232 695,242 Q700,255 698,268 Q692,280 682,288 Q670,292 658,288 Q648,280 642,268 Q638,254 640,242 Q642,235 645,232 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M697,169 Q711,161 725,169 L733,181 Q739,197 736,214 L728,233 Q719,247 708,250 L697,247 Q689,239 686,225 L683,208 Q683,192 689,178 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- Japan --}}
-                        <path class="map-land" d="M822,168 Q830,162 838,165 Q842,172 840,182 Q836,192 830,198 Q824,200 820,195 Q816,188 818,178 Q820,172 822,168 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M881,125 Q886,119 892,122 L894,131 Q892,142 889,150 L883,158 Q878,156 875,150 L875,139 Q878,131 881,125 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- Southeast Asia Islands --}}
-                        <path class="map-land" d="M758,280 Q772,275 788,278 Q802,282 812,292 Q818,302 815,315 Q808,325 798,328 Q785,330 772,325 Q762,318 756,308 Q752,296 754,285 Q755,280 758,280 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M803,250 Q819,244 836,250 L850,258 Q861,269 858,283 L850,297 Q839,306 825,308 L808,306 Q797,297 794,283 L794,267 Q797,256 803,250 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- Australia --}}
-                        <path class="map-land" d="M780,348 Q805,338 832,342 Q858,348 878,362 Q890,375 888,392 Q882,408 868,418 Q850,425 830,422 Q808,418 790,408 Q775,396 770,382 Q768,368 772,355 Q775,350 780,348 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M836,297 Q856,289 878,292 L900,300 Q914,311 919,328 L919,347 Q914,364 900,375 L881,381 Q864,383 847,378 L833,369 Q822,356 822,339 L825,319 Q828,306 836,297 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
                         {{-- New Zealand --}}
-                        <path class="map-land" d="M905,400 Q912,395 918,398 Q920,405 916,412 Q910,416 904,414 Q900,408 902,402 Q904,400 905,400 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.8" filter="url(#landShadow)" />
+                        <path class="map-land" d="M942,361 Q947,356 953,358 Q956,364 953,372 L947,378 Q942,375 939,369 Z" fill="#e4dbc8" stroke="#d4c9b0" stroke-width="0.5" filter="url(#landShadow)" />
 
                         {{-- Data circles + labels --}}
                         @foreach($topLocations as $loc)
                             @php
                                 $coords = $countryCoords[$loc->country] ?? null;
-                                if (!$coords) continue;
+                            @endphp
+                            @continue(!$coords)
+                            @php
                                 $ratio = $loc->visit_count / $maxCount;
                                 $r = 8 + ($ratio * 22);
                                 $opacity = 0.35 + ($ratio * 0.55);
