@@ -68,3 +68,4 @@ Résumé rapide:
 - Lancer les migrations sur la base cible
 - Pour Render en SQLite, les données sont fragiles lors des redéploiements
 - Pour un vrai usage formulaire + dashboard + projets, préférer une base MySQL persistante
+# Cheikh
