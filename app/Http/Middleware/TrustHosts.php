@@ -15,6 +15,9 @@ class TrustHosts extends Middleware
     {
         return [
             $this->allSubdomainsOfApplicationUrl(),
+            '^([a-z0-9-]+\.)?onrender\.com$',
+            '^localhost$',
+            '^127\.0\.0\.1$',
         ];
     }
 }
