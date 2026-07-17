@@ -30,6 +30,23 @@ class DatabaseSeeder extends Seeder
         \App\Models\Projet::insert([
             [
                 'user_id' => $user->id,
+                'titre' => 'Yonnu Makk',
+                'description' => 'Plateforme en deux parties: une application Flutter (yonnu_makk_front) et une API Laravel (BackEnd_Yonnu_makk) pour gérer les parcours et services.',
+                'image' => 'images/projets/portfolio-dynamique.png',
+                'lien' => null,
+                'github' => 'https://github.com/papekeinde/yoonu_makk',
+                'tags' => json_encode(['Flutter', 'Dart', 'Laravel', 'MySQL', 'REST API']),
+                'ordre' => 0,
+                'complexite' => 88,
+                'type' => 'Mobile + API',
+                'status' => 'approved',
+                'progress' => 100,
+                'approved_at' => now(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ],
+            [
+                'user_id' => $user->id,
                 'titre' => 'MonTerrain',
                 'description' => 'Tu veux réserver un terrain de foot ou de basket ? Tu choisis ton créneau sur le calendrier, tu paies, c\'est confirmé. Côté admin, tout se gère depuis un panneau dédié.',
                 'image' => 'images/projets/monterrain.png',
