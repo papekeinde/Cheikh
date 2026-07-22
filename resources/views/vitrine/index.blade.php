@@ -2011,14 +2011,6 @@
             <div class="timeline-subtitle">Cours Sainte Marie de Hann</div>
             <div class="timeline-desc">Sciences biologiques, sciences physiques et sciences mathématiques.</div>
         </div>
-
-        <h3 style="margin-top: 32px;">Expérience Professionnelle</h3>
-        <div class="timeline-item">
-            <div class="timeline-year">Déc. 2024 – Présent</div>
-            <div class="timeline-title">Développeur Web</div>
-            <div class="timeline-subtitle">STAR Group · Temps partiel</div>
-            <div class="timeline-desc">Développement web (HTML5, XAMPP), gestion des réseaux sociaux et relation client. Admin système sur Windows Server (AD DS, DNS, DHCP, WSUS, WDS, CA) et Linux.</div>
-        </div>
     </div>
 
     <!-- GSAP CDN + ScrollTrigger -->

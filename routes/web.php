@@ -18,7 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [UserController::class, 'index'])->middleware('track')->name('vitrine');
+Route::get('/', [UserController::class, 'index'])->name('vitrine');
 
 Route::get('/__health', function () {
     return response()->json([
